@@ -53,11 +53,14 @@ Comparar cada comportamento relevante com `docs/` no projeto completo; corrigir 
 
 As etapas de implementação e os documentos anteriores integram o histórico autoral do **Forecast** e permanecem disponíveis como ponto inicial para futuras modificações. Não foram atribuídas datas ou versões adicionais sem evidência.
 
-## Evolução 01 — tentativa de deploy e incompatibilidade confirmada (10 de novembro de 2026)
+## Evolução 01 — implantação tentada e pendências reais (10 de novembro de 2026)
 
-- O primeiro conjunto de arquivos JavaScript, workflow, testes e documentos foi publicado diretamente na `main` no commit `111a6ad`, sem passar previamente por PR. Esta divergência do processo exigido pelo autor é registrada expressamente e corrigida nas próximas alterações por branch, issue e PR.
-- O commit `0c2ce168` atualizou o `AGENTS.md` na `main`.
-- O GitHub Actions executou a instalação do `@tgcloud/cli` e todos os **17 testes locais** com sucesso, nas [execuções 1](https://github.com/morfalespi/forecast/actions/runs/42940489709) e [2](https://github.com/morfalespi/forecast/actions/runs/42941734379).
-- Em ambas, **`tgcloud push` foi recusado**: a CLI 0.2.0 não reconhece `handlers/widget_query.js` como handler válido. `migrate` e `webhook sync` ficaram sem execução. Não houve deploy confirmado no Telegram Serverless.
-- `docs/telegram-bot-api.md` e `docs/telegram-widgets.md` documentam `widget_query`, mas o conjunto de tipos de handler da CLI instalada não o inclui. Portanto, correspondência documental com a Bot API, por si só, não demonstra suporte da plataforma Serverless nesse ponto.
-- A [issue #2](https://github.com/morfalespi/forecast/issues/2) registra os arquivos envolvidos, a reprodução, os riscos e as decisões pendentes. Esta evolução não é considerada finalizada até resolver a incompatibilidade e confirmar a execução no Telegram com o proprietário.
+- A primeira estrutura Serverless entrou diretamente em `main` no commit `111a6ad`, antes de passar por um PR. A divergência com o método definido pelo autor é registrada, sem reescrever esse histórico.
+- A atualização de `AGENTS.md` entrou em `main` pelo commit `0c2ce168`. Este PR corrige apenas as cercas Markdown acidentalmente incluídas nesse arquivo, preservando suas regras.
+- As [execuções 1](https://github.com/morfalespi/forecast/actions/runs/42940489709) e [2](https://github.com/morfalespi/forecast/actions/runs/42941734379) instalaram a CLI e executaram 17 testes com sucesso, mas `tgcloud push` falhou porque a CLI 0.2.0 rejeitou `handlers/widget_query.js`.
+- A [issue #1](https://github.com/morfalespi/forecast/issues/1) e o [PR #3](https://github.com/morfalespi/forecast/pull/3) registraram a incompatibilidade e implementaram uma alternativa usando `callback_query`: o cartão Widget mantém os dados em `chat_data` e os comandos interativos são botões Telegram. O PR #3 foi integrado à `main` no commit `d57d1e09`.
+- A [execução 3](https://github.com/morfalespi/forecast/actions/runs/42942206972) instalou a CLI, passou os 17 testes e reconheceu os módulos, mas o `push` foi bloqueado pela **formatação inválida de `TGCLOUD_TOKEN`**. A CLI exige o formato `app<id>:<secret>`.
+- Em todas as execuções, `migrate` e `webhook sync` ficaram sem execução. Não há confirmação de deploy Serverless nem teste real no aplicativo.
+- A [issue #2](https://github.com/morfalespi/forecast/issues/2) acompanha o ajuste do secret de CLI pelo proprietário, a repetição do deploy e a validação de ponta a ponta.
+
+**Limites de comprovação:** a passagem dos testes locais prova os comportamentos exercitados nesses testes, não a aceitação do deploy nem o uso do bot no Telegram. A publicação efetiva ainda depende de credencial correta, migração, sincronização e teste real com o autor.
