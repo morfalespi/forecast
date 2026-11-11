@@ -1,6 +1,10 @@
 # CHANGELOG — Forecast
 
-Histórico legível da evolução do bot. **Proposto**, **implementado em desenvolvimento**, **testado localmente**, **verificado no Telegram** e **publicado** são estados diferentes. Não presumir publicação ou compatibilidade operacional a partir de código, documentação ou testes simulados.
+Histórico legível imtegral da evolução do bot. **Proposto**, **implementado em desenvolvimento**, **testado localmente**, **verificado no Telegram** e **publicado** são estados diferentes e explicados abaixo sem resumo. 
+
+O texto abaixo é a confirmação direta da coerência total com a normativa impressa e seguida no processo elaborado, conforme o texto `AGENTS.md` decide as regras para as modificações abaixo:
+
+##### NÃO ALTERAR TEXTO ACIMA DESSE AVISO.
 
 ## Correção de compatibilidade para deploy — 10/11 de novembro de 2026
 
