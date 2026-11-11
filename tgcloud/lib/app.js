@@ -4,6 +4,7 @@ import { widgetHtml } from './widget.js';
 const YEAR=365*86400000, MONTH=30*86400000;
 const help='🌤 Forecast\nEnvie uma cidade ou localização.\n/buscar cidade — procurar\n/tempo — hoje\n/previsao — 5 dias\n/widget — cartão interativo experimental\n/apagar — remover local salvo e desativar cartões\n/help — ajuda';
 const buttons={inline_keyboard:[[{text:'Hoje',callback_data:'weather:today'},{text:'5 dias',callback_data:'weather:5days'}],[{text:'Atualizar',callback_data:'weather:refresh'},{text:'Trocar cidade',callback_data:'weather:change_city'}]]};
+const widgetButtons={inline_keyboard:[[{text:'Hoje',callback_data:'widget:today'},{text:'5 dias',callback_data:'widget:5days'}],[{text:'Atualizar',callback_data:'widget:refresh'}]]};
 export function createApp({api,store,weather}) {
   const say=(chat,text,extra={})=>api.sendMessage({chat_id:chat,text,...extra});
   const messageKey=(chat,id)=>'message:'+chat+':'+id;
@@ -18,8 +19,9 @@ export function createApp({api,store,weather}) {
   }
   async function widgetCard(chat,user,place) {
     const w=await weather.forecast(place);
-    const sent=await api.sendWidget({chat_id:chat,html:widgetHtml,allow_queries:true,
-      chat_data:widgetState(place,w),caption:place.name+'\n'+forecastText(w)+'\nOpen-Meteo • https://open-meteo.com/'});
+    const sent=await api.sendWidget({chat_id:chat,html:widgetHtml,
+      chat_data:widgetState(place,w),caption:place.name+'\n'+forecastText(w)+'\nOpen-Meteo • https://open-meteo.com/',
+      reply_markup:widgetButtons});
     await store.put(messageKey(chat,sent.message_id),{created:Date.now(),user,place,mode:'today',kind:'widget'},MONTH);
   }
   async function search(chat,user,query) {
@@ -85,6 +87,15 @@ export function createApp({api,store,weather}) {
           await store.remove(key);
           return edit('editMessageText',{chat_id:chat.id,message_id:q.message.message_id,text:'Local salvo: '+place.name,reply_markup:{inline_keyboard:[]}});
         }
+        if(record.kind==='widget') {
+          if(!['widget:today','widget:5days','widget:refresh'].includes(q.data)) return;
+          const mode=q.data==='widget:refresh'?record.mode:q.data.slice(7);
+          const w=await weather.forecast(record.place);
+          await edit('editMessageWidgetData',{chat_id:chat.id,message_id:q.message.message_id,chat_data:widgetState(record.place,w,mode)});
+          await edit('editMessageCaption',{chat_id:chat.id,message_id:q.message.message_id,caption:record.place.name+'\n'+forecastText(w,mode)+'\nOpen-Meteo • https://open-meteo.com/',reply_markup:widgetButtons});
+          await store.put(key,{...record,mode},MONTH);
+          return;
+        }
         if(record.kind!=='text') return;
         if(q.data==='weather:change_city') return say(chat.id,'Envie o nome da nova cidade.');
         if(!['weather:today','weather:5days','weather:refresh'].includes(q.data)) return;
@@ -93,27 +104,6 @@ export function createApp({api,store,weather}) {
         await edit('editMessageText',{chat_id:chat.id,message_id:q.message.message_id,text:record.place.name+'\n'+forecastText(w,mode)+'\nFonte: https://open-meteo.com/',reply_markup:buttons});
         await store.put(key,{...record,mode},MONTH);
       });
-    },
-    async widget_query(q) {
-      const answer=data=>api.answerWidgetQuery({widget_query_id:q.id,data});
-      if(q.chat?.type!=='private'||q.chat.id!==q.from.id||!q.message_id||q.type?.type!=='data'||!['today','5days','refresh'].includes(q.data)) return answer('Pedido inválido.');
-      const key=messageKey(q.chat.id,q.message_id),record=await store.get(key);
-      if(!record||record.kind!=='widget'||record.user!==q.from.id) return answer('Cartão expirado. Envie /widget.');
-      const revoked=await store.get('revoked:'+q.from.id);
-      if(revoked && (!record.created || record.created<=revoked)) return answer('Cartão desativado. Envie /widget para criar outro.');
-      if(!await store.claim('widget-rate:'+q.from.id,5000)) return answer('Aguarde 5 segundos entre atualizações.');
-      // ACK before outbound weather I/O, within Telegram's 15-second deadline.
-      await answer('Pedido aceito. Aguarde a atualização; se não chegar, tente novamente.');
-      const mode=q.data==='refresh'?record.mode:q.data;
-      try {
-        const w=await weather.forecast(record.place);
-        await edit('editMessageWidgetData',{chat_id:q.chat.id,message_id:q.message_id,chat_data:widgetState(record.place,w,mode)});
-        await edit('editMessageCaption',{chat_id:q.chat.id,message_id:q.message_id,caption:record.place.name+'\n'+forecastText(w,mode)+'\nOpen-Meteo • https://open-meteo.com/'});
-        await store.put(key,{...record,mode},MONTH);
-      } catch(e) {
-        await say(q.chat.id,'Não foi possível atualizar o cartão. Tente novamente ou use /tempo.');
-        if(!(e instanceof WeatherError)) throw e;
-      }
     },
     async inline_query(q) {
       if(!await store.claim('inline-rate:'+q.from.id,1000)) return api.answerInlineQuery({inline_query_id:q.id,results:[],cache_time:1,is_personal:true});
