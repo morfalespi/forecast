@@ -1,4 +1,4 @@
-``` # AGENTS.md 
+# AGENTS.md
 
 > Regras de Compliance para o processo de implementação e evolução do código referente ao repositório do GitHub denominado “morfalespi/forecast”.
 
@@ -34,4 +34,4 @@ Quando for relevante conferir ao autor decidir sobre alguma diferença ou uma no
 
 ## Convenções de colaboração
 
-- Uso fiel e ético do texto contido no AGENTS.md durante o trabalho feito no projeto. ``` 
+- Uso fiel e ético do texto contido no AGENTS.md durante o trabalho feito no projeto.
