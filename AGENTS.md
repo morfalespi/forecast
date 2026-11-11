@@ -1,4 +1,4 @@
-# AGENTS.md — 
+``` # AGENTS.md 
 
 > Regras de Compliance para o processo de implementação e evolução do código referente ao repositório do GitHub denominado “morfalespi/forecast”.
 
@@ -8,7 +8,7 @@ Este documento normatiza **as regras para desenvolver** o projeto. Ele define o 
 
 ## Orientação técnica
 
-Os arquivos Markdown de `docs/` são a **fonte obrigatória de orientação para escrever e modificar o código**. Antes de decidir uma implementação, ler ao todo e definir com robustez técnica as partes pertinente, compreender o que descrevem sobre recursos, operações, parâmetros, dados, sequências e restrições e usar a solução orientada para atualizações efetuadas.
+Os arquivos Markdown de `/docs` são a **fonte obrigatória de orientação para escrever e modificar o código**. Antes de decidir uma implementação, ler ao todo e definir com robustez técnica as partes pertinente, compreender o que descrevem sobre recursos, operações, parâmetros, dados, sequências e restrições e usar a solução orientada para atualizações efetuadas.
 
 A documentação fornece regras e execução para as soluções que serão aplicadas, ou seja:
 
@@ -25,7 +25,7 @@ Quando for relevante conferir ao autor decidir sobre alguma diferença ou uma no
 1. **Trabalhar uma evolução por vez.**  Seguir o objetivo de desenvolvimento decidido pelo autor e compreendê-lo antes de iniciar outra evolução. Se for necessário confirme detalhes e peça confirmação. Uma evolução pode exigir mudanças em vários arquivos e não precisa ser limitada à menor alteração possível.
 
 2. **Ler a orientação antes de escolher a solução.** 
-   Obedecer à íntegra da seção **Orientação técnica****
+   Obedecer à íntegra da seção **Orientação técnica**
    
 3. **Concluir a evolução com uma descrição de commit e pull request detalhada.** 
    Indicar todas operações foram realizadas e as alterações feitas em todos arquivos atualizados de modo integral, explicar de modo direto e esclarecido a justificação técnica que sustenta, a referência que baseou e como se conectam e o se está finalizado com sucesso eficaz.
@@ -34,4 +34,4 @@ Quando for relevante conferir ao autor decidir sobre alguma diferença ou uma no
 
 ## Convenções de colaboração
 
-- Uso fiel e ético do texto contido no AGENTS.md durante o trabalho feito no projeto.
+- Uso fiel e ético do texto contido no AGENTS.md durante o trabalho feito no projeto. ``` 
