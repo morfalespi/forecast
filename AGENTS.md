@@ -1,4 +1,6 @@
-``` # AGENTS.md 
+# AGENTS.md 
+
+##### NAO ALTERAR.
 
 > Regras de Compliance para o processo de implementação e evolução do código referente ao repositório do GitHub denominado “morfalespi/forecast”.
 
@@ -30,8 +32,8 @@ Quando for relevante conferir ao autor decidir sobre alguma diferença ou uma no
 3. **Concluir a evolução com uma descrição de commit e pull request detalhada.** 
    Indicar todas operações foram realizadas e as alterações feitas em todos arquivos atualizados de modo integral, explicar de modo direto e esclarecido a justificação técnica que sustenta, a referência que baseou e como se conectam e o se está finalizado com sucesso eficaz.
    
-> Elaborar issue correspondente a cada pull request com a descrição detalhada robusta explicada para esclarecimento a transparente da evolução do código indicando possíveis fragilidades, comportamento similar à *fallbacks* ou substituições ou que podem alterar completamente relevante em caso de falha e como interferem no funcionamento como todo para cada caso, ou de modo indireto e toda mudança em si de maneira completa e integral sem resumo.
+> ESCLARECENDO MELHOR: PR É OBRIGATÓRIO. Para cada PR deve ser emitido ISSUE correspondente a cada REFERIDA PR, com a descrição detalhada robusta, completa e explicada para esclarecimento a transparente da evolução do código indicando possíveis fragilidades, comportamento similar à *fallbacks* ou substituições ou que podem alterar completamente relevante em caso de falha e como interferem no funcionamento como todo para cada caso, ou de modo indireto e toda mudança em si de maneira completa e integral sem resumo.
 
 ## Convenções de colaboração
 
-- Uso fiel e ético do texto contido no AGENTS.md durante o trabalho feito no projeto. ``` 
+- Uso fiel e ético do texto contido no AGENTS.md durante o trabalho feito no projeto. 
