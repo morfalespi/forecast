@@ -1,0 +1,17 @@
+{
+  "name": "forecast",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test tests/*.test.js",
+    "status": "tgcloud status",
+    "deploy": "tgcloud push"
+  },
+  "devDependencies": {
+    "@tgcloud/cli": "0.2.0"
+  },
+  "engines": {
+    "node": ">=22.13"
+  }
+}
