@@ -10,16 +10,16 @@
 - **Salvar um local** para consultas posteriores.
 - **Consultar o tempo de hoje e a previsão de cinco dias**, em texto.
 - **Compartilhar previsões em texto pelo modo inline.**
-- **Experimentar o cartão `/widget`**, com Hoje, 5 dias e Atualizar, em conversa privada com o bot.
+- **Experimentar o cartão `/widget`** em conversa privada, com os botões nativos **Hoje**, **5 dias** e **Atualizar** abaixo do cartão. O conteúdo do Widget muda via `chat_data`.
 - **Apagar o local salvo** e desativar a atualização dos cartões antigos com `/apagar`. As mensagens anteriores continuam no histórico da conversa.
 
 Os comandos preparados no código incluem `/start`, `/help`, `/buscar cidade`, `/tempo`, `/previsao`, `/widget` e `/apagar`. O botão Atualizar pode reutilizar dados meteorológicos recentes do cache; não garante nova coleta a cada toque.
 
 ## Estado do desenvolvimento
 
-A versão **0.1.0** é uma implementação de desenvolvimento, **não uma versão publicada ou validada ponta a ponta**. Os registros existentes descrevem testes locais bem-sucedidos, mas ainda não confirmam funcionamento do SDK no ambiente remoto, entrega efetiva dos updates, respostas do Open-Meteo ao vivo nem apresentação dos widgets nos aplicativos Telegram.
+A versão **0.1.0** está em migração para produção. O primeiro workflow de publicação falhou porque a CLI Serverless 0.2.0 rejeitou o handler `widget_query`, embora esse update exista na Bot API. A [issue #1](https://github.com/morfalespi/forecast/issues/1) acompanha a compatibilização. O resultado do deploy deve ser conferido no GitHub Actions; execução dos comandos e renderização no aplicativo Telegram exigem confirmação real.
 
-Os widgets são destinados ao chat privado; o modo inline continua textual. Esta versão não oferece vários favoritos, previsões de 7 ou 15 dias, identificação automática do nome do lugar via geocodificação reversa nem alertas meteorológicos oficiais. Os dados de uma etapa anterior armazenados em SQLite local ainda não foram migrados.
+Os widgets são destinados ao chat privado; o modo inline continua textual. Como o roteador Serverless atual não disponibiliza `widget_query` entre os tipos aceitos, esta implementação usa o handler **`callback_query` e teclado inline**, não requisições internas `TelegramWidget.request()`; o cartão exibe o estado e acompanha suas atualizações. Esta versão não oferece vários favoritos, previsões de 7 ou 15 dias, identificação automática do nome do lugar via geocodificação reversa nem alertas meteorológicos oficiais. Os dados de uma etapa anterior armazenados em SQLite local ainda não foram migrados.
 
 ## Organização do projeto
 

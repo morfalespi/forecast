@@ -27,6 +27,7 @@ async function card(h,extra={}) {await h.store.put('message:1:10',{created:Date.
 test('widget stays within raw and compressed UTF-8 limits; no external assets',()=>{
  assert.ok(Buffer.byteLength(widgetHtml)<=32768);assert.ok(deflateSync(widgetHtml,{level:9}).length<=4096);
  assert.doesNotMatch(widgetHtml,/fetch\(|<script\s+src|<link|https?:/);
+ assert.doesNotMatch(widgetHtml,/W\.request\(|TelegramWidget\.request\(/);
 });
 test('state size counts UTF-8 and JSON escaping',()=>{
  for(const name of ['é'.repeat(500),'😀'.repeat(500),'"\\'.repeat(500)]) assert.ok(Buffer.byteLength(widgetState({...place,name},forecast,'5days'))<=1024);
@@ -56,36 +57,38 @@ test('upstream failure is explicit, not silently fresh cached data',async()=>{
  const h=harness();const w=createWeather(async()=>({ok:false}),h.store);
  await assert.rejects(w.forecast(place),WeatherError);
 });
-test('widget queries are acknowledged before slow HTTP, then state and caption change',async()=>{
+const widgetCallback=(data='widget:refresh',id=1)=>({id:'c',from:{id},message:{chat:{type:'private',id:1},message_id:10},data});
+test('serverless routes widget changes through supported callback_query handler',async()=>{
  const h=harness();await card(h);
- h.weather.forecast=async()=>{assert.equal(h.calls[0].method,'answerWidgetQuery');return forecast;};
- await h.app.widget_query(query('5days'));
- assert.deepEqual(h.calls.map(c=>c.method),['answerWidgetQuery','editMessageWidgetData','editMessageCaption']);
+ h.weather.forecast=async()=>{assert.equal(h.calls[0].method,'answerCallbackQuery');return forecast;};
+ await h.app.callback_query(widgetCallback('widget:5days'));
+ assert.deepEqual(h.calls.map(c=>c.method),['answerCallbackQuery','editMessageWidgetData','editMessageCaption']);
  assert.equal((await h.store.get('message:1:10')).mode,'5days');
+ assert.match(h.calls[1].args.chat_data,/5days/);
 });
-test('forged actions, wrong owners and groups cannot access weather',async()=>{
- for(const q of [query('arbitrary'),{...query(),from:{id:2}},{...query(),chat:{id:-1,type:'group'}}]) {
-  const h=harness();await card(h);await h.app.widget_query(q);
-  assert.equal(h.calls.length,1);assert.equal(h.calls[0].method,'answerWidgetQuery');
+test('forged actions, wrong owners and groups cannot mutate widget state',async()=>{
+ for(const q of [widgetCallback('widget:arbitrary'),widgetCallback('widget:refresh',2),{...widgetCallback(),message:{chat:{id:-1,type:'group'},message_id:10}}]) {
+  const h=harness();await card(h);await h.app.callback_query(q);
+  assert.ok(h.calls.length<=1);assert.equal(h.calls[0]?.method,'answerCallbackQuery');
  }
 });
-test('old widget retains its own city after changing saved location',async()=>{
+test('widget keeps its own location after saved location changes',async()=>{
  const h=harness();await card(h);await h.store.put('user:1',{...place,name:'Other'},10000);
- h.weather.forecast=async p=>{assert.equal(p.name,'São Paulo');return forecast;};await h.app.widget_query(query());
+ h.weather.forecast=async p=>{assert.equal(p.name,'São Paulo');return forecast;};await h.app.callback_query(widgetCallback());
 });
-test('expired message never mutates state',async()=>{
- const h=harness();await card(h);h.advance(60001);await h.app.widget_query(query());
- assert.equal(h.calls.length,1);assert.match(h.calls[0].args.data,/expirado/);
+test('expired widget cannot mutate remote state',async()=>{
+ const h=harness();await card(h);h.advance(60001);await h.app.callback_query(widgetCallback());
+ assert.equal(h.calls.length,1);assert.match(h.calls[0].args.text,/expirado/);
 });
-test('only known no-op Bot API errors are accepted',async()=>{
+test('only known harmless edit errors are tolerated for widget updates',async()=>{
  const h=harness();await card(h);
- const api={...Object.fromEntries(['answerWidgetQuery','editMessageCaption','sendMessage'].map(m=>[m,h.api[m]])),editMessageWidgetData:async()=>{throw {code:400,description:'Bad Request: message is not modified'};}};
- await createApp({...h,api}).widget_query(query());
+ const api={answerCallbackQuery:h.api.answerCallbackQuery,editMessageCaption:h.api.editMessageCaption,sendMessage:h.api.sendMessage,editMessageWidgetData:async()=>{throw {code:400,description:'Bad Request: message is not modified'};}};
+ await createApp({...h,api}).callback_query(widgetCallback());
  assert.equal(h.calls.at(-1).method,'editMessageCaption');
 });
-test('forecast failure after ACK reports failure without claiming success',async()=>{
- const h=harness();await card(h);h.weather.forecast=async()=>{throw new WeatherError('Offline');};await h.app.widget_query(query());
- assert.deepEqual(h.calls.map(c=>c.method),['answerWidgetQuery','sendMessage']);
+test('forecast failure after callback acknowledgment never claims success',async()=>{
+ const h=harness();await card(h);h.weather.forecast=async()=>{throw new WeatherError('Offline');};await h.app.callback_query(widgetCallback());
+ assert.deepEqual(h.calls.map(c=>c.method),['answerCallbackQuery','sendMessage']);
 });
 test('delete removes saved location and all private message records',async()=>{
  const h=harness();await card(h);await h.store.put('user:1',place,60000);await h.app.message(msg('/apagar'));
@@ -99,6 +102,8 @@ test('inline uses articles and modern button, never production widgets',async()=
 test('private /widget sends HTML widget and persists message owner',async()=>{
  const h=harness();await h.store.put('user:1',place,60000);await h.app.message(msg('/widget'));
  assert.equal(h.calls[0].method,'sendWidget');assert.equal((await h.store.get('message:1:1')).user,1);
+ assert.equal(h.calls[0].args.allow_queries,undefined);
+ assert.deepEqual(h.calls[0].args.reply_markup.inline_keyboard.map(row=>row.map(b=>b.callback_data)),[['widget:today','widget:5days'],['widget:refresh']]);
 });
 test('stale search and negative indexes cannot save a location',async()=>{
  const h=harness();await h.app.message(msg('/buscar São Paulo'));h.advance(2000);

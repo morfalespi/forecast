@@ -2,6 +2,16 @@
 
 Histórico legível da evolução do bot. **Proposto**, **implementado em desenvolvimento**, **testado localmente**, **verificado no Telegram** e **publicado** são estados diferentes. Não presumir publicação ou compatibilidade operacional a partir de código, documentação ou testes simulados.
 
+## Correção de compatibilidade para deploy — 10/11 de novembro de 2026
+
+- **Falha real identificada:** no workflow inicial da `main`, a instalação da CLI e os 17 testes locais passaram, mas `npx tgcloud push` recusou o módulo `handlers/widget_query.js` por não pertencer ao conjunto de handlers suportados nesta versão do Serverless. O deploy, a migração e o webhook não foram concluídos naquela execução.
+- **Orientação confrontada:** a Bot API documenta `widget_query` e `answerWidgetQuery`; a documentação do Serverless condiciona o nome do handler ao conjunto aceito pela plataforma. Os logs comprovam a divergência nesta implantação.
+- **Compatibilização:** removido o handler rejeitado e o uso de `TelegramWidget.request`; `sendWidget` agora envia o HTML com `chat_data` e botões nativos (`callback_query`: Hoje / 5 dias / Atualizar). O backend mantém `editMessageWidgetData` e `editMessageCaption` para atualizar o cartão.
+- **Segurança e persistência:** mantidos controles de usuário, chat privado, vínculo por mensagem, expiração, revogação, limitação de frequência e cache do Open-Meteo. Consultas inline e comandos meteorológicos não foram modificados nesta correção.
+- **Validação local:** 17 testes passaram com Node 22 após a correção. Eles não comprovam entrega de webhooks, execução remota ou visualização no aplicativo.
+- **Limitação:** botões ficam **abaixo** do Widget; solicitações disparadas dentro do HTML não estão habilitadas nesta etapa. Não apresentar essa solução como suporte a `widget_query`.
+- **Rastreabilidade:** issue [#1](https://github.com/morfalespi/forecast/issues/1), PR correspondente e logs de publicação. A autorização do proprietário inclui merge na `main` e deploy em produção; o resultado será conferido após o workflow.
+
 ## Em preparação — 10 de novembro de 2026
 
 ### Tarefa 01: organização dos documentos
