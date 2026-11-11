@@ -28,3 +28,9 @@ O projeto completo separa o código de execução em `tgcloud/`, os testes em `t
 `AGENTS.md` estabelece como comparar o código com a documentação e revisar mudanças. `CHANGELOG.md` distingue o que foi preparado, implementado, verificado e publicado.
 
 A implantação é feita pelo GitHub Actions após atualização da branch `main`, usando o segredo `TGCLOUD_TOKEN`. O workflow publica módulos, aplica mudanças aditivas do banco e sincroniza o webhook. A confirmação de uso real depende de interação no Telegram.
+
+## Situação da publicação em produção (10 de novembro de 2026)
+
+O autor autorizou a implantação pelo GitHub Actions, seguindo a regra de issue e pull request do `AGENTS.md`. Duas execuções automáticas foram iniciadas depois de commits diretos na `main`: [execução 1](https://github.com/morfalespi/forecast/actions/runs/42940489709) e [execução 2](https://github.com/morfalespi/forecast/actions/runs/42941734379). **Ambas falharam antes da publicação dos módulos.**
+
+A CLI instalada (`@tgcloud/cli` 0.2.0) rejeitou `tgcloud/handlers/widget_query.js` porque `widget_query` não consta entre os tipos de handler aceitos, embora a Bot API 10.4 documente esse update. Os 17 testes locais executados pelo GitHub Actions passaram, mas `tgcloud push`, `migrate` e `webhook sync` não foram concluídos. A [issue #2](https://github.com/morfalespi/forecast/issues/2) registra a incompatibilidade e os impactos. A resolução dos Widgets interativos requer uma decisão sobre a compatibilidade do Serverless, sem tratá-los como já operacionais.
