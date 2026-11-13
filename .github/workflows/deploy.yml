@@ -30,8 +30,22 @@ jobs:
         run: npm install --no-audit --no-fund
       - name: Run local tests
         run: npm test
-      - name: Check credentials
-        run: test -n "$TGCLOUD_TOKEN"
+      - name: Validate Telegram Serverless CLI credential
+        shell: bash
+        run: |
+          set -euo pipefail
+          # CLI token is app<id>:<secret>; never print it.
+          # A copied line break or surrounding quotes is not part of the token.
+          token="$(printf '%s' "$TGCLOUD_TOKEN" | tr -d '\r\n')"
+          if [[ "$token" == \"*\" ]] || [[ "$token" == \'*\' ]]; then
+            token="${token:1:${#token}-2}"
+          fi
+          if [[ ! "$token" =~ ^app[0-9]+:[^[:space:]]+$ ]]; then
+            echo "::error title=Credencial Telegram Serverless inválida::TGCLOUD_TOKEN não corresponde ao formato de token CLI app<id>:<secret> exigido pela documentação. O valor não foi exibido."
+            exit 1
+          fi
+          echo "::add-mask::$token"
+          printf 'TGCLOUD_TOKEN=%s\n' "$token" >> "$GITHUB_ENV"
       - name: Publish Serverless modules
         run: npx tgcloud push
       - name: Apply additive database changes
