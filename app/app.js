@@ -34,7 +34,10 @@ function syncTheme() {
   const scheme = webApp?.colorScheme;
   const dark = scheme === 'dark' || (scheme !== 'light' && systemTheme.matches);
   root.dataset.theme = dark ? 'dark' : 'light';
-  themeMeta.content = dark ? '#1b1646' : '#8b82e6';
+  const background = dark ? '#1b1646' : '#8b82e6';
+  themeMeta.content = background;
+  if (typeof webApp?.setHeaderColor === 'function') webApp.setHeaderColor(background);
+  if (typeof webApp?.setBackgroundColor === 'function') webApp.setBackgroundColor(background);
 }
 
 function syncViewport() {
@@ -264,21 +267,19 @@ function todayContent(data) {
   content.append(metrics);
   if (data.periods?.length) {
     content.append(create('h2', 'content-title', 'Próximos períodos'));
+    const periodGrid = create('div', 'periods-grid');
     for (const period of data.periods) {
-      const card = create('article', 'glass-panel frost period-panel');
-      const details = create('div', 'period-text');
-      details.append(
+      const card = create('article', 'glass-panel frost period-tile');
+      card.append(
         create('h3', 'period-title', period.label),
-        create('p', 'period-details', [
-          period.description,
-          temperature(period.temperature),
-          'Chuva: ' + value(period.precipitation, '%'),
-          'Vento: ' + value(period.wind, ' km/h')
-        ].join(' · '))
+        weatherIcon(period.emoji, period.code, true),
+        create('p', 'period-temp', temperature(period.temperature)),
+        create('p', 'period-desc', period.description || 'Condição não informada'),
+        create('p', 'period-meta', 'Chuva ' + value(period.precipitation, '%') + ' · Vento ' + value(period.wind, ' km/h'))
       );
-      card.append(weatherIcon(period.emoji, period.code, true), details);
-      content.append(card);
+      periodGrid.append(card);
     }
+    content.append(periodGrid);
   }
   return content;
 }
@@ -323,7 +324,9 @@ function renderForecast() {
   const next = activePeriod === 'three'
     ? threeDayContent(forecast)
     : activePeriod === 'week' ? weekContent(forecast) : todayContent(forecast);
-  forecastContent.replaceChildren(next);
+  forecastContent.dataset.period = activePeriod;
+  forecastContent.dataset.hasPeriods = String(Boolean(forecast.periods?.length));
+  forecastContent.replaceChildren(...next.children);
   for (const button of tabs.querySelectorAll('[data-period]')) {
     button.setAttribute('aria-pressed', String(button.dataset.period === activePeriod));
   }
