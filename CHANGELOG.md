@@ -17,3 +17,4 @@
 - Substitui no diretório temporário do runner o exemplo criado pelo scaffold pelos módulos `tgcloud/`, pela Mini App `app/` e pela configuração `tgcloud.json` do repositório.
 - Executa `npx tgcloud push` dentro do projeto criado em `tFORECASTbot`.
 - Expõe `TGCLOUD_TOKEN` somente à etapa de `tgcloud push`, sem disponibilizar o secret ao scaffold ou às etapas de cópia.
+- Remove o cabeçalho `X-Content-Type-Options` da configuração estática porque o Telegram Serverless recusou esse cabeçalho durante a preparação da versão.
