@@ -5,7 +5,7 @@
   --ink:#183147;
   --soft-ink:#496579;
   --muted:#5a7285;
-  --glass-tint:rgba(238,240,245,.30);
+  --glass-tint:var(--vidro-tint-claro,rgba(238,240,245,.30));
   --glass-strong:rgba(244,249,252,.60);
   --glass-shadow:rgba(33,69,104,.12);
   --glass-active:rgba(249,252,255,.79);
@@ -20,7 +20,7 @@
   --ink:#f6f8ff;
   --soft-ink:#d6e4f1;
   --muted:#cad6e3;
-  --glass-tint:rgba(18,25,44,.30);
+  --glass-tint:var(--vidro-tint-escuro,rgba(18,18,20,.30));
   --glass-strong:rgba(31,49,78,.53);
   --glass-shadow:rgba(0,14,34,.19);
   --glass-active:rgba(227,237,253,.93);
