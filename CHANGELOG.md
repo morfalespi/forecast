@@ -19,7 +19,8 @@
 - Não adiciona comentários, credenciais, banco, migração, histórico, dados simulados ou arquivos de teste.
 - Não altera a Mini App, o endpoint `getProfile`, `tgcloud.json` ou `package.json`.
 - Sincroniza o estado do projeto temporário com `npx tgcloud fetch` antes do `push`, evitando a recusa de implantação quando o bot já possui módulos publicados.
-- Mantém `TGCLOUD_TOKEN` restrito às etapas oficiais de `fetch` e `push` do Telegram Serverless.
+- Sincroniza o webhook após o deploy para incluir os tipos de atualização correspondentes aos handlers publicados, incluindo `callback_query`.
+- Mantém `TGCLOUD_TOKEN` restrito às etapas oficiais de `fetch`, `push` e `webhook sync` do Telegram Serverless.
 
 ## 1.0.0 — 2026-11-14
 

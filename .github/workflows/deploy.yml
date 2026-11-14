@@ -43,4 +43,8 @@ jobs:
         working-directory: tFORECASTbot
         env:
           TGCLOUD_TOKEN: ${{ secrets.TGCLOUD_TOKEN }}
+      - run: npx tgcloud webhook sync
+        working-directory: tFORECASTbot
+        env:
+          TGCLOUD_TOKEN: ${{ secrets.TGCLOUD_TOKEN }}
 
