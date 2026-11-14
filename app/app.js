@@ -69,19 +69,129 @@ function value(value, suffix) {
   return typeof value === 'number' && Number.isFinite(value) ? Math.round(value) + suffix : '—';
 }
 
-function iconCategory(code) {
-  if (code === 0 || code === 1) return 'sun';
-  if ([2, 3, 45, 48].includes(code)) return 'cloud';
-  if ([71, 73, 75, 77, 85, 86].includes(code)) return 'snow';
-  if ([95, 96, 99].includes(code)) return 'storm';
-  if (code >= 51 && code <= 82) return 'rain';
-  return 'cloud';
+function iconCategory(code, night = false) {
+  const id = Number(code);
+  if (id === 0 || id === 1) return night ? 'moon' : 'sun';
+  if (id === 2) return night ? 'night-partly' : 'partly';
+  if (id === 3) return 'cloud';
+  if (id === 45 || id === 48) return 'fog';
+  if ([51, 53, 55, 56, 57].includes(id)) return 'drizzle';
+  if ([61, 63, 65, 66, 67, 80, 81, 82].includes(id)) return 'rain';
+  if ([71, 73, 75, 77, 85, 86].includes(id)) return 'snow';
+  if ([95, 96, 99].includes(id)) return 'storm';
+  return 'unknown';
 }
 
-function weatherIcon(emoji, code, small = false) {
-  const category = iconCategory(code);
-  const node = create('span', 'weather-symbol ' + category + (small ? ' small' : ''), emoji || '🌡️');
+function svgElement(tag, attributes = {}, children = []) {
+  const node = document.createElementNS('http://www.w3.org/2000/svg', tag);
+  for (const [key, val] of Object.entries(attributes)) node.setAttribute(key, String(val));
+  node.append(...children);
+  return node;
+}
+
+function sunArtwork(cx = 35, cy = 25, radius = 11) {
+  const rays = svgElement('g', { class: 'wx-rays' });
+  for (let index = 0; index < 8; index += 1) {
+    const angle = index * Math.PI / 4;
+    const inner = radius + 5;
+    const outer = radius + 10;
+    rays.append(svgElement('line', {
+      x1: cx + Math.cos(angle) * inner,
+      y1: cy + Math.sin(angle) * inner,
+      x2: cx + Math.cos(angle) * outer,
+      y2: cy + Math.sin(angle) * outer,
+      class: 'wx-ray'
+    }));
+  }
+  return svgElement('g', { class: 'wx-sun-assembly' }, [
+    rays,
+    svgElement('circle', { cx, cy, r: radius + 3, class: 'wx-sun-halo' }),
+    svgElement('circle', { cx, cy, r: radius, class: 'wx-sun-core' })
+  ]);
+}
+
+function moonArtwork() {
+  return svgElement('g', { class: 'wx-moon-assembly' }, [
+    svgElement('path', {
+      class: 'wx-moon-core',
+      d: 'M42 9c-4.6 6.9-4.5 15.5 1.8 21.5 3.9 3.8 8.3 5.4 12.8 4.5C53 45 43.8 51 33 48.5 21.6 45.7 16 34.8 19.8 24.5 23.4 15 32.4 10.2 42 9Z'
+    }),
+    svgElement('circle', { cx: 50, cy: 15, r: 1.7, class: 'wx-star star-one' }),
+    svgElement('circle', { cx: 54, cy: 24, r: 1.1, class: 'wx-star star-two' })
+  ]);
+}
+
+function cloudArtwork() {
+  return svgElement('g', { class: 'wx-cloud-assembly' }, [
+    svgElement('path', {
+      class: 'wx-cloud-back',
+      d: 'M16 31c-1.2-5.2 2.6-10.7 8-11.1 1.9-6.3 9.8-9.3 15.1-5.7 3.2 2.1 4.7 5.1 5.1 8.2 5.7-.4 11 3.6 11.4 8.7H16Z'
+    }),
+    svgElement('path', {
+      class: 'wx-cloud-front',
+      d: 'M15.7 46c-5.7 0-10-4.2-10-9.2 0-5.1 3.8-9.1 8.8-9.6 2.1-6.4 8.4-10.7 15.4-10.7 7.4 0 13.8 5 15 12 6.8.2 12 4.3 12 9.4 0 5.2-4.6 8.1-10.4 8.1H15.7Z'
+    }),
+    svgElement('path', {
+      class: 'wx-cloud-sheen',
+      d: 'M15 33c1.4-1.2 3.7-1.5 5.3-1.1 1.1-5.5 5.5-9.2 11-9.2'
+    })
+  ]);
+}
+
+function weatherArtwork(type) {
+  const nodes = [];
+  if (type === 'sun' || type === 'partly') nodes.push(sunArtwork());
+  if (type === 'moon' || type === 'night-partly') nodes.push(moonArtwork());
+  if (!['sun', 'moon', 'unknown'].includes(type)) nodes.push(cloudArtwork());
+  if (type === 'fog') {
+    nodes.push(svgElement('g', { class: 'wx-fog-lines' }, [
+      svgElement('path', { d: 'M12 51h26', class: 'wx-fog-line' }),
+      svgElement('path', { d: 'M23 57h30', class: 'wx-fog-line' })
+    ]));
+  }
+  if (type === 'rain' || type === 'drizzle') {
+    const drops = [17, 31, 45].map((x, i) => svgElement('path', {
+      d: type === 'drizzle' ? 'M' + x + ' 50l-1.8 4' : 'M' + x + ' 49l-3 8',
+      class: 'wx-drop drop-' + (i + 1)
+    }));
+    nodes.push(svgElement('g', { class: 'wx-rain-lines' }, drops));
+  }
+  if (type === 'snow') {
+    nodes.push(svgElement('g', { class: 'wx-snow-particles' }, [
+      svgElement('path', { d: 'M17 50v9m-4.5-4.5h9m-7.7-3.2 6.4 6.4m0-6.4-6.4 6.4', class: 'wx-snowflake snow-one' }),
+      svgElement('path', { d: 'M43 48v9m-4.5-4.5h9m-7.7-3.2 6.4 6.4m0-6.4-6.4 6.4', class: 'wx-snowflake snow-two' })
+    ]));
+  }
+  if (type === 'storm') {
+    nodes.push(svgElement('g', { class: 'wx-lightning' }, [
+      svgElement('path', { d: 'M33 45 24 56h8l-3 8 14-15h-9l3-4Z', class: 'wx-bolt' })
+    ]));
+  }
+  if (type === 'unknown') {
+    nodes.push(svgElement('circle', { cx: 32, cy: 32, r: 16, class: 'wx-question-disc' }));
+    nodes.push(svgElement('path', { d: 'M25 25c0-6 14-8 14 0 0 5-7 6-7 12m0 7v1', class: 'wx-question-path' }));
+  }
+  return svgElement('svg', {
+    class: 'wx-artwork',
+    xmlns: 'http://www.w3.org/2000/svg',
+    viewBox: '0 0 64 64',
+    fill: 'none',
+    'aria-hidden': 'true',
+    focusable: 'false'
+  }, nodes);
+}
+
+function nightForCurrent() {
+  const time = forecast?.updatedAt;
+  const hour = typeof time === 'string' ? Number(time.slice(11, 13)) : NaN;
+  return Number.isFinite(hour) && (hour < 6 || hour >= 19);
+}
+
+function weatherIcon(emoji, code, small = false, night = false) {
+  const category = iconCategory(code, night);
+  const node = create('span', 'weather-symbol wx-' + category + (small ? ' small' : ''));
   node.setAttribute('aria-hidden', 'true');
+  node.append(weatherArtwork(category));
   return node;
 }
 
@@ -252,7 +362,7 @@ function todayPanel(data) {
   const number = typeof current.temperature === 'number' ? current.temperature : '—';
   temp.append(document.createTextNode(String(number)), create('span', 'unit', '°C'));
   info.append(create('p', 'eyebrow', 'AGORA'), temp, create('p', 'condition-name', current.description || 'Condição não informada'));
-  panel.append(info, weatherIcon(current.emoji, current.code));
+  panel.append(info, weatherIcon(current.emoji, current.code, false, nightForCurrent()));
   return panel;
 }
 
@@ -276,7 +386,7 @@ function todayContent(data) {
       const card = create('article', 'glass-panel frost period-tile');
       card.append(
         create('h3', 'period-title', period.label),
-        weatherIcon(period.emoji, period.code, true),
+        weatherIcon(period.emoji, period.code, true, /noite|madrugada/i.test(period.label)),
         create('p', 'period-temp', temperature(period.temperature)),
         create('p', 'period-desc', period.description || 'Condição não informada'),
         create('p', 'period-meta', 'Chuva ' + value(period.precipitation, '%') + ' · Vento ' + value(period.wind, ' km/h'))
@@ -300,7 +410,7 @@ function threeDayContent(data) {
       create('p', 'day-stats', temperature(day.minimum) + ' – ' + temperature(day.maximum)),
       create('p', 'period-details', 'Chuva: ' + value(day.precipitation, '%') + ' · Vento: ' + value(day.wind, ' km/h'))
     );
-    card.append(weatherIcon(day.emoji, day.code, true), info);
+    card.append(info, weatherIcon(day.emoji, day.code, true));
     content.append(card);
   }
   if (!data.days.length) content.append(emptyPanel('Sem dados', 'Não há previsão disponível para esses dias.'));
