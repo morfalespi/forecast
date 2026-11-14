@@ -213,25 +213,6 @@
       .search-feedback {margin-top: 8px;min-height:18px;}
       .footnote {font-size:8px;}
     }
-    .page[data-keyboard="open"] {
-      padding-top: max(10px, env(safe-area-inset-top, 0px));
-      padding-bottom: max(10px, env(safe-area-inset-bottom, 0px));
-    }
-    .page[data-keyboard="open"] .hero {padding: 0 0 4px;}
-    .page[data-keyboard="open"] .weather-mark,
-    .page[data-keyboard="open"] .kicker,
-    .page[data-keyboard="open"] .footnote,
-    .page[data-keyboard="open"] .search-hint {display:none;}
-    .page[data-keyboard="open"] h1 {font-size: clamp(36px, 10vw, 49px);}
-    .page[data-keyboard="open"] .tagline {font-size:13px;margin: 8px auto 15px;max-width:260px;}
-    .page[data-keyboard="open"] .search {height:58px;}
-    .page[data-keyboard="open"] .search-go {width:42px;height:42px;}
-    .page[data-keyboard="open"] .search-feedback {margin: 8px 0 0;min-height:18px;font-size:12px;}
-    .page[data-compact="true"] .tagline,
-    .page[data-compact="true"] .search-feedback {display:none;}
-    .page[data-compact="true"] .hero {padding:0;}
-    .page[data-compact="true"] h1 {font-size:36px;}
-    .page[data-compact="true"] .topbar {margin-bottom:5px;}
     @media(prefers-reduced-motion: reduce){.search,.search-go{transition:none;}}
     @media(prefers-reduced-transparency: reduce){.frost{backdrop-filter:none;-webkit-backdrop-filter:none;background:var(--glass-top);}}
 
@@ -326,14 +307,6 @@
       cursor:pointer;
     }
     .page[data-mode="results"] .footnote {display:none;}
-    .page[data-keyboard="open"] .intro .weather-mark,
-    .page[data-keyboard="open"] .intro .kicker,
-    .page[data-keyboard="open"] .intro .tagline {display:none;}
-    .page[data-keyboard="open"] .intro h1 {font-size:clamp(32px,9vw,44px);margin-bottom:13px;}
-    .page[data-keyboard="open"] .home-view {justify-content:flex-start;padding-top:6px;}
-    .page[data-keyboard="open"] .search-results {max-height:calc(var(--visual-height, 100dvh) - 190px);}
-    .page[data-keyboard="open"] .search-hint,
-    .page[data-keyboard="open"] .footnote {display:none;}
     .forecast-view {
       display:flex;
       flex-direction:column;
@@ -1324,6 +1297,8 @@
   transform:none;
 }
 .page[data-screen="home"] .search-go {
+  width:48px;
+  height:48px;
   touch-action:manipulation;
 }
 .page[data-screen="home"] .search-feedback {
@@ -1340,13 +1315,11 @@
 .page[data-screen="home"] .refine {
   margin-top:8px;
 }
-.page[data-screen="home"][data-mode="results"] .intro,
-.page[data-screen="home"][data-keyboard="open"] .intro {
+.page[data-screen="home"][data-mode="results"] .intro {
   display:block;
   margin-bottom:24px;
 }
-.page[data-screen="home"][data-mode="results"] .intro h1,
-.page[data-screen="home"][data-keyboard="open"] .intro h1 {
+.page[data-screen="home"][data-mode="results"] .intro h1 {
   font-size:clamp(52px,13vw,68px);
 }
 .page[data-screen="forecast"] .hero {
