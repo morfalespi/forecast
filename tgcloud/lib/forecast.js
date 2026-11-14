@@ -232,17 +232,19 @@ function heading(text, size = 2) {
   return { type: 'heading', text, size };
 }
 
-function footer(forecast) {
+function footer(forecast, compact = false) {
   const time = typeof forecast?.current?.time === 'string' ? forecast.current.time.slice(11, 16) : '';
-  const updated = time ? ` · Atualizado às ${time}, horário local` : '';
+  const updated = time
+    ? compact ? ` • Atualizado às ${time}.` : ` · Atualizado às ${time}, horário local`
+    : '';
   return {
     type: 'footer',
     text: [
       'Fonte: ',
       { type: 'url', text: 'Open-Meteo', url: OPEN_METEO_URL },
-      ' — ',
+      compact ? ' • ' : ' — ',
       { type: 'url', text: 'CC BY 4.0', url: LICENSE_URL },
-      ' · Dados resumidos pelo Forecast',
+      ...(compact ? [] : [' · Dados resumidos pelo Forecast']),
       updated
     ]
   };
@@ -264,16 +266,21 @@ function forecastButtons(locationId, active) {
 
 function currentBlocks(location, forecast) {
   const current = forecast?.current ?? {};
+  const today = dailyForecast(forecast, 1)[0];
   const [emoji, description] = weatherInfo(current.weather_code);
   const temperature = valueText(current.temperature_2m, ' °C') ?? 'Temperatura não informada';
+  const minimum = valueText(today?.minimum, ' °C') ?? '—';
+  const maximum = valueText(today?.maximum, ' °C') ?? '—';
   const apparent = valueText(current.apparent_temperature, ' °C');
   const humidity = valueText(current.relative_humidity_2m, '%');
   const wind = valueText(current.wind_speed_10m, ' km/h');
   const blocks = [
     heading(location.name, 1),
+    heading(`AGORA · ${temperature}`, 2),
+    heading(`MIN • ${minimum}`, 3),
+    heading(`MAX • ${maximum}`, 3),
+    { type: 'divider' },
     heading([
-      { type: 'bold', text: `AGORA · ${temperature}` },
-      '\n',
       `${emoji} ${description}`,
       ...(apparent ? ['\n', `Sensação: ${apparent}`] : []),
       ...(humidity || wind ? ['\n', detailsText([humidity ? `Umidade: ${humidity}` : null, wind ? `Vento: ${wind}` : null])] : [])
@@ -481,7 +488,7 @@ export function buildForecastMessage(location, forecast, period = 'today') {
       ? threeDayBlocks(location, forecast)
       : weekBlocks(location, forecast);
   return {
-    blocks: [...content, forecastButtons(location.id, period), footer(forecast)]
+    blocks: [...content, forecastButtons(location.id, period), footer(forecast, period === 'today')]
   };
 }
 
