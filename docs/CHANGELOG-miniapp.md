@@ -1,5 +1,61 @@
 # Changelog — Mini App Forecast
 
+## 2026-11-14 — Refinamento 04: reconstrução visual pela arquitetura óptica do ZIP
+
+**Escopo aprovado:** substituir o acabamento artesanal por um sistema visual fundamentado em `HTML-main 3.zip`, ampliar tipografia, redesenhar cards, substituir chuva animada do fundo por cenários estáticos conforme a condição atual e preservar o Mini App meteorológico funcional.
+
+### Fundamentos do arquivo de referência
+
+- Reaberto o arquivo `HTML-main 3.zip` e lidos os arquivos `vidro.ini`, `src/lib/vidro.ts`, `src/lib/optics.ts`, `src/components/Frost.tsx`, `src/components/GlassPill.tsx`, `src/components/Surfaces.tsx`, `src/pages/Painel.tsx`, `docs/DESIGN-CONTRATO.md` e `docs/DESEMPENHO.md`.
+- Aplicada a separação normativa da referência: grandes superfícies de leitura usam fosco CSS com blur e saturação, enquanto a refração real fica restrita a pequenos controles selecionados.
+- Transferidos os parâmetros essenciais de `vidro.ini` para `frontend/vidro.ini`: tinta e material fosco, desativação de brilho especular e configuração óptica de controle segmentado.
+- A implementação da refração utiliza a dependência real `@samasante/liquid-glass@0.1.1` da referência, sem simular a biblioteca através de gradientes. Recurso montado de forma tardia e apenas na navegação de previsão.
+- A orientação de desempenho da referência também é preservada: fallback apenas fosco no WebKit/Firefox, filtros ópticos limitados e resolução 1 para reduzir custo no celular.
+
+### Nova estrutura de frontend
+
+- Criado `frontend/package.json` com React 19, React DOM 19, Vite 8, plugin React e `@samasante/liquid-glass@0.1.1`.
+- Criados `frontend/vite.config.js` e `frontend/index.html` para gerar HTML, CSS e JavaScript estáticos.
+- Criados `frontend/src/main.jsx`, `frontend/src/components/Frost.jsx`, `frontend/src/components/GlassControls.jsx`, `frontend/src/components/WeatherIcon.jsx`, `frontend/src/lib/vidro.js` e `frontend/src/styles.css`.
+- O Mini App renderiza a pesquisa, os resultados, os painéis Hoje/3 dias/Semana, as mensagens de erro, o tema e os detalhes meteorológicos em componentes React.
+- Mantidas as chamadas reais `Telegram.WebApp.Serverless.call('searchLocations', ...)` e `Telegram.WebApp.Serverless.call('getForecast', ...)`.
+- Mantidas a prevenção de respostas obsoletas, a validação de textos, a apresentação segura de conteúdo e a atribuição à Open-Meteo e CC BY 4.0.
+- A tela inicial exibe apenas Forecast e a pesquisa. O formulário não força `blur()` antes da chamada; resultados e Refinar busca aparecem abaixo sem mover o campo.
+
+### Cenários de clima
+
+- Adicionados nove cenários SVG minimalistas em `frontend/public/scenes/`: `neutral.svg`, `sun.svg`, `partly.svg`, `cloud.svg`, `rain.svg`, `storm.svg`, `snow.svg`, `fog.svg` e `night.svg`.
+- Os cenários são estáticos, sem gotas ou outros elementos em movimento. As formas atmosféricas usam gradientes, nuvens foscas, nevoeiro, chuva desenhada ou claridade, conforme a condição.
+- O cenário é escolhido pelo código meteorológico atual e pelo período do dia; permanece fixo ao alternar Hoje/3 dias/Semana e volta ao neutro na tela inicial.
+- A escolha dos cenários não depende do tema Telegram. O tema determina um revestimento de contraste claro ou escuro sobre a paisagem; não há botão manual.
+
+### Acabamento dos componentes
+
+- Cards com parâmetros ópticos centralizados e superfícies foscas; eliminado o acúmulo de pseudo-elementos de brilho e sombras arbitrárias dos refinamentos anteriores.
+- Pesquisa em pílula de vidro fosco. Resultados e Nova busca recebem o mesmo material com pesos visuais diferentes.
+- Hoje: temperatura principal com destaque, métricas em grade 3+2 e próximos períodos amplos com ícones animados.
+- 3 dias: três cards distribuídos na altura disponível, com datas, descrições, mínima/máxima, chuva, vento e símbolo maior.
+- Semana: sete linhas de leitura organizada, com tipografia reforçada e distribuição vertical proporcional.
+- Navegação inferior mantém Hoje, 3 dias e Semana com pílula selecionada e lente de refração real em Blink. Nos navegadores sem suporte, o controle continua funcional e fosco.
+- Layout mantém largura máxima de 430 px, altura responsiva à viewport visual, sem rolagem externa nem zoom por pinça. Rolagem interna de contingência em telas muito baixas.
+- Símbolos SVG continuam animados de forma discreta, com respeito a `prefers-reduced-motion`.
+
+### Compilação e integração Telegram
+
+- Atualizado `.github/workflows/deploy.yml` para acompanhar alterações em `frontend/**` e executar `npm install` e `npm run build` dentro do frontend antes de publicar.
+- O workflow copia `frontend/dist` para a pasta `tFORECASTbot/app` e remove o conteúdo estático anterior. `tgcloud.json` segue apontando para `app/` dentro do projeto do Telegram Serverless.
+- O arquivo `app/` histórico do repositório permanece como legado, mas não é utilizado pelo workflow atualizado para implantação. A fonte canônica da interface passa a ser `frontend/`.
+- Os módulos em `tgcloud/lib/`, `tgcloud/handlers/`, `tgcloud/endpoints/` e o contrato de dados da Open-Meteo não foram modificados.
+- Atualizado `README.md` com a nova arquitetura, o processo de publicação e a origem do sistema visual.
+
+### Inspeção @TG Dev
+
+- Revisadas as orientações de `BOT_API.md`, `SERVERLESS.md` e `MINI_APPS.md` e as decisões de óptica/performance do ZIP.
+- Inspeção estática dos imports, chamadas Serverless, tipos de dados esperados, tema automático, fallback óptico, cenas locais e distribuição das telas.
+- Nenhum arquivo de código ganhou comentários.
+- Não foram executados testes, benchmarks ou builds locais; o build em GitHub Actions é uma etapa necessária de publicação, não um teste funcional.
+- A confirmação do deploy e do resultado visual no Telegram dependerá da execução do workflow e da revisão manual do usuário.
+
 ## 2026-11-14 — Refinamento 03: composição contínua, altura útil e pesquisa fixa
 
 **Solicitação aprovada:** corrigir os retângulos e as descontinuidades gráficas entre cards, ocupar de forma inteligente a altura disponível de Hoje, 3 dias e Semana, tornar as animações meteorológicas perceptíveis e impedir deslocamentos ou a necessidade de dois toques na busca ao abrir o teclado.
