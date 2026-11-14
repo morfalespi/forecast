@@ -82,11 +82,19 @@ function useTelegramTheme() {
 function useViewHeight() {
   useEffect(() => {
     const viewport = window.visualViewport;
+    const root = document.documentElement;
+    let stableHomeHeight = Math.max(1, Math.round(telegram?.viewportStableHeight || window.innerHeight));
     const sync = () => {
-      const h = Math.max(1, Math.round(viewport?.height ?? window.innerHeight));
-      const y = Math.max(0, Math.round(viewport?.offsetTop ?? 0));
-      document.documentElement.style.setProperty("--view-h", h + "px");
-      document.documentElement.style.setProperty("--view-y", y + "px");
+      const height = Math.max(1, Math.round(viewport?.height ?? window.innerHeight));
+      const offset = Math.max(0, Math.round(viewport?.offsetTop ?? 0));
+      root.style.setProperty("--view-h", height + "px");
+      root.style.setProperty("--view-y", offset + "px");
+      const fieldFocused = document.activeElement?.tagName === "INPUT";
+      const keyboardVisible = stableHomeHeight - height > 110;
+      if (!fieldFocused && !keyboardVisible) {
+        stableHomeHeight = Math.max(height, Math.round(telegram?.viewportStableHeight || 0));
+      }
+      root.style.setProperty("--home-height", stableHomeHeight + "px");
     };
     sync();
     viewport?.addEventListener("resize", sync);
@@ -131,7 +139,7 @@ function SearchScreen({ query, setQuery, onSearch, onSelect, results, loading, s
       {status && <p className="search-status" role="status">{status}</p>}
       {results.length > 0 && <div className="search-results" aria-label="Localidades encontradas">
         {results.slice(0, 5).map(place =>
-          <Frost key={place.id} className="search-result">
+          <Frost key={place.id} className="search-result" optics={{ frost: 0, saturate: 1 }}>
             <button type="button" onClick={() => onSelect(place)}>
               <span className="result-location"><strong>{place.name}</strong><small>{[place.admin1, place.country].filter(Boolean).join(" · ")}</small></span>
               <span className="result-arrow" aria-hidden="true">›</span>
@@ -297,7 +305,6 @@ function ForecastApp() {
     try {
       const result = await callServerless("searchLocations", { query: cleaned });
       if (serial.current !== token) return;
-      inputRef.current?.blur();
       const places = Array.isArray(result?.locations) ? result.locations.slice(0, 5) : [];
       setResults(places);
       setStatus(places.length ? "" : "Nenhuma localidade encontrada.");
