@@ -37,6 +37,7 @@ jobs:
       - run: |
           rm -rf tFORECASTbot/tgcloud
           cp -R tgcloud tFORECASTbot/tgcloud
+          rm -rf tFORECASTbot/app
           cp -R frontend/dist tFORECASTbot/app
           cp tgcloud.json tFORECASTbot/tgcloud.json
           rm -f tFORECASTbot/tgcloud.jsonc
