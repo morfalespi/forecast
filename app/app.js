@@ -36,8 +36,11 @@ function syncTheme() {
   root.dataset.theme = dark ? 'dark' : 'light';
   const background = dark ? '#1b1646' : '#8b82e6';
   themeMeta.content = background;
-  if (typeof webApp?.setHeaderColor === 'function') webApp.setHeaderColor(background);
-  if (typeof webApp?.setBackgroundColor === 'function') webApp.setBackgroundColor(background);
+  if (webApp?.isVersionAtLeast?.('6.1')) {
+    const nativeColor = webApp.isVersionAtLeast('6.9') ? background : 'bg_color';
+    if (typeof webApp.setHeaderColor === 'function') webApp.setHeaderColor(nativeColor);
+    if (typeof webApp.setBackgroundColor === 'function') webApp.setBackgroundColor(nativeColor);
+  }
 }
 
 function syncViewport() {
