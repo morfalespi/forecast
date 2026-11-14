@@ -1325,6 +1325,7 @@
 .page[data-screen="forecast"] .hero {
   justify-content:flex-start;
   align-items:stretch;
+  overflow:visible;
 }
 .page[data-screen="forecast"] .forecast-view {
   flex:1 1 auto;
