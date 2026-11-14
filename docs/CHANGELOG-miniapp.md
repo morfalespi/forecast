@@ -1,5 +1,56 @@
 # Changelog — Mini App Forecast
 
+## 2026-11-14 — Refinamento 03: composição contínua, altura útil e pesquisa fixa
+
+**Solicitação aprovada:** corrigir os retângulos e as descontinuidades gráficas entre cards, ocupar de forma inteligente a altura disponível de Hoje, 3 dias e Semana, tornar as animações meteorológicas perceptíveis e impedir deslocamentos ou a necessidade de dois toques na busca ao abrir o teclado.
+
+### Pesquisa e teclado — `app/app.js`
+
+- Reorganizado `syncViewport`: continua acompanhando a altura e o deslocamento visível do Telegram, mas deixa de aplicar estados de compactação e reposicionamento da tela inicial conforme o foco do teclado.
+- Mantida uma altura de referência para o fundo orgânico, permitindo que a região ilustrada não seja redimensionada a cada abertura do teclado.
+- O envio do formulário não força `searchInput.blur()` antes de iniciar a chamada `searchLocations`; o primeiro toque no botão ou a tecla de pesquisa do teclado inicia a consulta imediatamente.
+- Após a resposta válida da consulta, o teclado é fechado antes de revelar a lista de até cinco cidades; quando não há localidades, a opção `Refinar busca` continua acessível.
+- O bloqueio de gestos permanece ativo fora dos controles; o campo, a barra de busca e os botões continuam recebendo os eventos normais de toque.
+- Preservados a validação da consulta, a serialização para evitar respostas obsoletas, os estados de carregamento/erro e a seleção de localidades.
+
+### Tela inicial estável — `app/styles.css`
+
+- Tela inicial reduzida ao título Forecast e à barra de pesquisa. Mantido o fundo orgânico com chuva leve, sem elementos decorativos adicionais que necessitem ser redimensionados durante a digitação.
+- Removidas regras CSS antigas que escondiam, diminuíam ou deslocavam a apresentação no estado de teclado aberto.
+- O título e a busca passam a ocupar uma posição superior previsível, independente da variação de altura da viewport durante a abertura do teclado.
+- Campo e botão permanecem com tamanho constante; resultados reais, mensagens e `Refinar busca` são apresentados abaixo do campo, sem reposicioná-lo.
+- Quando necessário, somente a lista de resultados recebe rolagem interna; o documento continua fixo e sem zoom por pinça.
+
+### Previsões em tela cheia — `app/styles.css`
+
+- Substituída a centralização vertical da previsão por ocupação integral da altura útil entre cabeçalho e navegação inferior, reduzindo a grande área vazia mostrada nas capturas.
+- `forecast-view` passa a preencher o espaço flexível; `forecast-scroll` não recorta mais os cards e suas sombras durante a visualização normal.
+- Hoje preserva o resumo, cinco métricas, título e próximos períodos com proporções de altura equilibradas; 3 dias divide o espaço restante entre três cards; Semana entre sete linhas.
+- Em telas excepcionalmente baixas, permanece rolagem interna de contingência para evitar corte de dados; a página externa nunca rola.
+- Preservados os valores meteorológicos, os textos, as descrições e a navegação Hoje / 3 dias / Semana.
+
+### Integridade do vidro — `app/styles.css`
+
+- Removidos filtros `backdrop-filter` por card e camadas de isolamento e recorte que poderiam produzir faixas ou retângulos de composição do WebView sobre o fundo orgânico.
+- Desativadas as camadas pseudoelemento internas dos cards e o halo adicional do resumo principal, mantendo a transparência por meio de gradientes suaves, cantos arredondados e sombras discretas.
+- A navegação inferior continua com a aparência e o tratamento de vidro previstos no design original.
+- O documento segue sem bordas finas decorativas ou hairlines.
+
+### Animações dos símbolos — `app/styles.css`
+
+- Raios do sol agora executam uma rotação completa e lenta, com pulsação mais perceptível do disco e do halo.
+- Nuvens têm um deslocamento horizontal suave, inclusive em estados parcialmente nublados.
+- Gotas, flocos, lua e relâmpagos tiveram os tempos ajustados para facilitar a percepção sem excesso de movimento.
+- Transformações SVG usam referências de origem apropriadas aos símbolos e preservam a redução de movimento por `prefers-reduced-motion`.
+
+### Inspeção estática e escopo
+
+- Alterações limitadas a `app/app.js`, `app/styles.css`, `README.md` e este changelog.
+- Nenhuma alteração em `app/index.html`, `tgcloud/lib/forecast.js`, `tgcloud/endpoints/` ou `tgcloud/handlers/`.
+- Revisadas as referências oficiais da habilidade `@TG Dev`: `MINI_APPS.md`, `SERVERLESS.md` e `BOT_API.md`.
+- Conferidos por inspeção os caminhos de envio da busca, renderização das previsões, dimensionamento da tela e classes de animação.
+- Nenhum comentário de código foi introduzido. Não foram executados testes; a confirmação do resultado no Telegram fica para a avaliação manual do usuário após o deploy.
+
 ## 2026-11-14 — Refinamento 02: cards premium e animações meteorológicas em SVG
 
 **Escopo autorizado:** elevar exclusivamente a qualidade visual dos cartões das telas Hoje, 3 dias e Semana, e concluir as animações simples, específicas por condição meteorológica. Fluxos de pesquisa, endpoints, navegação e dados da Open-Meteo foram preservados.
