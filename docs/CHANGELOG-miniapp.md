@@ -1,5 +1,42 @@
 # Changelog — Mini App Forecast
 
+## 2026-11-14 — Refinamento 02: cards premium e animações meteorológicas em SVG
+
+**Escopo autorizado:** elevar exclusivamente a qualidade visual dos cartões das telas Hoje, 3 dias e Semana, e concluir as animações simples, específicas por condição meteorológica. Fluxos de pesquisa, endpoints, navegação e dados da Open-Meteo foram preservados.
+
+### Símbolos meteorológicos
+
+- **`app/app.js`**: substituídos os emojis apresentados como ícones meteorológicos por SVGs locais criados com `createElementNS`, sem serviços externos, imagens remotas ou novos pacotes.
+- Cada símbolo é composto por partes independentes, como raios e disco solar, lua e estrelas, camadas de nuvens, traços de chuva ou garoa, flocos, névoa e relâmpago.
+- Mapeamento visual compatível com os códigos WMO já recebidos: sol, parcialmente nublado, nublado, nevoeiro, garoa, chuva, neve e tempestade. Condições desconhecidas exibem um símbolo neutro.
+- Adicionado tratamento noturno apenas na apresentação visual: para o painel atual, a hora já informada pela previsão; para próximos períodos, os rótulos de noite/madrugada. Céu limpo ou parcialmente nublado passa a usar lua nessas ocasiões.
+- O conteúdo textual meteorológico e a classificação da fonte foram mantidos, incluindo temperaturas, probabilidade de precipitação, vento e descrições originais.
+- Ícones decorativos permanecem `aria-hidden`, pois as condições continuam descritas em texto nos cartões.
+
+### Animação discreta
+
+- **`app/styles.css`**: animações CSS individuais para pulsação solar e halo, rotação lenta dos raios, oscilação da lua e estrelas, deslocamento de nuvens, queda intermitente de gotas, flutuação de flocos, névoa e pulso controlado do relâmpago.
+- Animações utilizam majoritariamente `transform` e `opacity`, sem animar tamanho do layout; ícones continuam legíveis mesmo com as animações desativadas.
+- Respeitada a preferência `prefers-reduced-motion`: todo movimento interno do SVG é interrompido.
+
+### Refinamento dos cards
+
+- **Hoje:** vidro mais trabalhado no resumo principal, com brilho interno sutil, profundidade e proporções diferenciadas. Métricas redistribuídas em três cartões na primeira linha e dois de larguras iguais na segunda, com legibilidade aprimorada; próximos períodos passam a usar painéis mais delicados.
+- **3 dias:** cards mais arredondados, com ícone grande do lado direito, datas e descrições organizadas à esquerda e intervalo de temperatura destacado em cápsula discreta.
+- **Semana:** sete linhas arredondadas com melhor separação visual, priorizando nome do dia, símbolo, descrição, temperaturas e chuva sem competir por atenção.
+- Superfícies de vidro passam a compartilhar gradientes e sombras suaves nos modos claro e escuro, sem bordas decorativas ou hairlines.
+- Mantida a grade responsiva full-size, sem rolagem na página e com o comportamento de contingência para alturas excepcionalmente reduzidas.
+- Navegação de vidro e aparência do fundo chuvoso preservadas.
+
+### Limites funcionais e inspeção
+
+- Mudanças limitadas a **`app/app.js`** e **`app/styles.css`**, além da documentação.
+- `app/index.html`, `tgcloud/lib/forecast.js`, `tgcloud/endpoints/` e `tgcloud/handlers/` foram mantidos sem alterações.
+- Conferidos os pontos de renderização dos símbolos em Hoje, próximos períodos, 3 dias e Semana; funções da busca e da seleção permaneceram inalteradas.
+- Conferidos os nomes de funções e estilos de animação, os seletores e a ausência de inserção de HTML externo.
+- Conferida a orientação da habilidade `@TG Dev` em `MINI_APPS.md`, `SERVERLESS.md` e `BOT_API.md`.
+- Nenhum comentário de código foi adicionado. **Nenhum teste de execução foi realizado**, apenas revisão estática; a observação do comportamento real será feita pelo usuário no Telegram após a publicação.
+
 ## 2026-11-14 — Refinamento 01: previsões sem rolagem e barra superior harmonizada
 
 **Solicitação:** em visualização full-size, reorganizar o espaço disponível nas telas Hoje, 3 dias e Semana, dispensando rolagem durante a leitura, e harmonizar a barra superior do Telegram com a cor do Forecast.

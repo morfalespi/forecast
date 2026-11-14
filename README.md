@@ -9,7 +9,7 @@ Bot de previsão do tempo e Telegram Mini App, publicado no Telegram Serverless.
 - Busca no Mini App: até cinco localidades reais por pesquisa, identificação por cidade/região/país e opção **Refinar busca**.
 - Previsão no Mini App: condições atuais, mínima e máxima, sensação, umidade, vento, próximos períodos, três dias e semana.
 - Navegação inferior de vidro: **Hoje · 3 dias · Semana**, com alternância no mesmo painel.
-- Tema automático do Telegram (ou preferência do aparelho fora dele) e animações leves com preferência por movimento reduzido.
+- Tema automático do Telegram (ou preferência do aparelho fora dele) e ícones SVG animados por condição meteorológica (sol, lua, nuvens, chuva, neve, névoa, tempestade), respeitando movimento reduzido.
 - Layout de smartphone, inclusive no computador; página fixa, previsão distribuída sem rolagem em telas full-size convencionais e rolagem interna apenas em casos de altura insuficiente.
 - Fonte e atribuição: Open-Meteo, CC BY 4.0.
 
