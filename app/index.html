@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="color-scheme" content="light dark">
+    <title>Forecast</title>
+    <link rel="stylesheet" href="/styles.css">
+    <script src="https://telegram.org/js/telegram-web-app.js?61"></script>
+    <script src="/app.js" defer></script>
+  </head>
+  <body>
+    <main class="shell">
+      <header class="hero">
+        <div class="brand-mark" aria-hidden="true">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+        <div>
+          <p class="eyebrow">Telegram Mini App</p>
+          <h1>Forecast</h1>
+        </div>
+      </header>
+
+      <section class="status-card" aria-live="polite">
+        <div class="status-line">
+          <span id="status-dot" class="status-dot pending"></span>
+          <div>
+            <p class="status-label">Estado</p>
+            <h2 id="status-title">Conectando ao Telegram</h2>
+          </div>
+        </div>
+        <p id="status-detail" class="status-detail">A identidade será lida pelo endpoint protegido do Telegram Serverless.</p>
+      </section>
+
+      <section id="profile-card" class="profile-card" hidden>
+        <div class="avatar-wrap">
+          <img id="avatar" class="avatar" alt="Foto do perfil" hidden>
+          <div id="avatar-fallback" class="avatar-fallback" aria-hidden="true">F</div>
+        </div>
+        <div class="identity">
+          <p class="status-label">Identidade validada</p>
+          <h2 id="display-name">Telegram</h2>
+          <p id="username" class="username"></p>
+        </div>
+        <dl class="facts">
+          <div>
+            <dt>ID</dt>
+            <dd id="user-id"></dd>
+          </div>
+          <div>
+            <dt>Idioma</dt>
+            <dd id="language"></dd>
+          </div>
+          <div>
+            <dt>Contexto</dt>
+            <dd id="context"></dd>
+          </div>
+        </dl>
+      </section>
+
+      <p class="footnote">Dados exibidos somente na sessão atual da Mini App.</p>
+    </main>
+  </body>
+</html>
+

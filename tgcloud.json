@@ -1,0 +1,17 @@
+{
+  "$schema": "./node_modules/@tgcloud/cli/schema/tgcloud.json",
+  "static": {
+    "source": "app",
+    "spa": true,
+    "headers": [
+      {
+        "path": "/*",
+        "set": {
+          "Referrer-Policy": "no-referrer",
+          "X-Content-Type-Options": "nosniff"
+        }
+      }
+    ]
+  }
+}
+

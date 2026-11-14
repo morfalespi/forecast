@@ -1,6 +1,5 @@
-.tgcloud/
 node_modules/
-.env
-.env.*
-*.db
-*.sqlite*
+.tgcloud/
+.DS_Store
+npm-debug.log*
+
