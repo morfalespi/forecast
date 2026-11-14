@@ -405,11 +405,6 @@
       transform-origin:center;
     }
     .weather-symbol.small {width:35px;height:35px;font-size:27px;border-radius:12px;}
-    .weather-symbol.sun {animation:sun-glow 8s ease-in-out infinite;}
-    .weather-symbol.cloud {animation:cloud-drift 8s ease-in-out infinite;}
-    .weather-symbol.rain {animation:rain-float 6.5s ease-in-out infinite;}
-    .weather-symbol.snow {animation:rain-float 9s ease-in-out infinite;}
-    .weather-symbol.storm {animation:storm-pulse 8s ease-in-out infinite;}
     .metrics {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;}
     .metric {
       display:flex;
@@ -490,10 +485,6 @@
       z-index:2;
     }
     .attribution a {color:inherit;text-decoration:underline;text-underline-offset:2px;}
-    @keyframes sun-glow {0%,100%{transform:scale(1);filter:brightness(1)}50%{transform:scale(1.045);filter:brightness(1.12)}}
-    @keyframes cloud-drift {0%,100%{transform:translateX(0)}50%{transform:translateX(4px)}}
-    @keyframes rain-float {0%,100%{transform:translateY(0)}50%{transform:translateY(3px)}}
-    @keyframes storm-pulse {0%,100%{opacity:1}50%{opacity:.82}}
     @media(max-height:700px) {
       .current-panel {min-height:125px;padding:14px 17px;}
       .weather-symbol {width:68px;height:68px;font-size:48px;}
@@ -1070,6 +1061,9 @@
 }
 .page[data-screen="forecast"] .period-tab[aria-pressed="true"] {
   box-shadow:0 5px 12px rgba(34,25,77,.12);
+}
+.page[data-screen="forecast"] .weather-symbol {
+  filter:none;
 }
 .weather-symbol .wx-artwork {
   display:block;
