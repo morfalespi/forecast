@@ -640,9 +640,8 @@
 }
 .page[data-screen="forecast"] .periods-grid {
   display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(0,1fr));
-  grid-auto-columns:1fr;
-  grid-auto-flow:column;
+  grid-template-columns:repeat(var(--period-columns,2),minmax(0,1fr));
+  grid-auto-flow:row;
   gap:7px;
   min-height:0;
 }
