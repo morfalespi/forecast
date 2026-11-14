@@ -1,47 +1,52 @@
 # Forecast
 
-Bot de previsão do tempo e Telegram Mini App, publicado no Telegram Serverless. As mensagens do bot e a interface do Mini App compartilham a lógica de consulta à Open-Meteo.
+Bot e Telegram Mini App de previsão do tempo. A conversa no Telegram e o Mini App compartilham a lógica da Open-Meteo no Telegram Serverless.
 
-## Funcionalidades
+## Mini App — Refinamento 04
 
-- Conversa com o bot: comando `/clima`, pesquisa de cidades, seleção de localidades e previsões Hoje, 3 dias e Semana em Rich Messages.
-- Mini App: visual mobile-first baseado no Rascunho 05, com fundo de chuva sutil e superfícies translúcidas.
-- Busca no Mini App: campo fixo e estável durante a abertura do teclado, envio no primeiro toque, até cinco localidades reais por pesquisa, identificação por cidade/região/país e opção **Refinar busca**.
-- Previsão no Mini App: condições atuais, mínima e máxima, sensação, umidade, vento, próximos períodos, três dias e semana.
-- Navegação inferior de vidro: **Hoje · 3 dias · Semana**, com alternância no mesmo painel.
-- Tema automático do Telegram (ou preferência do aparelho fora dele) e ícones SVG animados por condição meteorológica (sol, lua, nuvens, chuva, neve, névoa, tempestade), respeitando movimento reduzido.
-- Layout de smartphone, inclusive no computador; título e pesquisa ancorados na tela inicial, previsão distribuída pela altura útil sem rolagem em telas full-size convencionais e rolagem interna apenas em casos de altura insuficiente.
-- Fonte e atribuição: Open-Meteo, CC BY 4.0.
+O frontend do Mini App agora é construído em React 19 com Vite 8, tendo como referência técnica o arquivo `HTML-main 3.zip`. Os componentes visuais são organizados por função óptica, seguindo as decisões do `vidro.ini` original:
+
+- **Vidro fosco** para cards de leitura, campos e contêineres grandes. O componente `Frost` aplica os parâmetros únicos de blur e saturação do arquivo `frontend/vidro.ini`.
+- **Refração real** na seleção da navegação segmentada em navegadores Blink compatíveis, com `@samasante/liquid-glass@0.1.1`. O componente é carregado apenas quando uma previsão está visível, depois da primeira pintura. Em WebKit e outros navegadores, usa o controle fosco, mantendo sua usabilidade.
+- **Cenários meteorológicos estáticos**, desenhados em SVG, para céu limpo, parcialmente nublado, nublado, chuva, tempestade, neve, nevoeiro e noite; o fundo neutro permanece na busca. O cenário reflete a condição atual da cidade e fica estável ao alternar Hoje, 3 dias e Semana.
+- **Tipografia ampliada e legibilidade:** temperatura como protagonista; textos de cards, métricas e previsões maiores. Os painéis ocupam a altura útil do smartphone, com navegação inferior fixa.
+- **Animações meteorológicas localizadas nos símbolos:** sol, nuvens, chuva, tempestade, neve, lua e névoa. Redução de movimento e transparência são respeitadas.
+- **Busca estável:** o título Forecast e o campo de pesquisa mantêm o mesmo posicionamento com teclado aberto ou fechado. O primeiro envio realiza a pesquisa; resultados (até cinco) e Refinar busca aparecem abaixo do campo.
+- **Tema automático do Telegram** com fallback para o modo do sistema em um navegador comum.
+- **Sem rolagem da página** e sem zoom por pinça; somente áreas internas possuem rolagem quando a tela é excepcionalmente curta.
 
 ## Arquitetura
 
 | Caminho | Responsabilidade |
 | --- | --- |
-| `tgcloud/lib/forecast.js` | Consulta e normalização de localidades e previsões; mensagens do bot e contrato de dados do Mini App |
-| `tgcloud/handlers/message.js` | Comando `/clima` e mensagens privadas |
-| `tgcloud/handlers/callback_query.js` | Seleção de localidades e botões no chat |
-| `tgcloud/endpoints/searchLocations.js` | Pesquisa de até cinco cidades, com sessão validada pelo Telegram Serverless |
-| `tgcloud/endpoints/getForecast.js` | Previsão para ID selecionado, retornando dados estruturados |
-| `tgcloud/endpoints/getProfile.js` | Endpoint de identidade já existente, mantido para compatibilidade |
-| `app/index.html` | Estrutura visual do Mini App |
-| `app/styles.css` | Design de vidro, fundo orgânico, chuva e animações |
-| `app/app.js` | Estados da interface, busca, seleção, navegação, tema e viewport |
-| `tgcloud.json` | Publicação da pasta estática `app/` |
-| `.github/workflows/deploy.yml` | Publicação no Telegram Serverless após alterações em `main` |
+| `frontend/index.html` | Entrada HTML com SDK oficial de Mini Apps do Telegram |
+| `frontend/src/main.jsx` | Estados, busca, previsões, troca de cenários, navegação e tema |
+| `frontend/src/components/Frost.jsx` | Superfície óptica fosca do arquivo de referência |
+| `frontend/src/components/GlassControls.jsx` | Controle segmentado com refração no Blink e fallback fosco |
+| `frontend/src/components/WeatherIcon.jsx` | Ícones SVG animados segundo código WMO |
+| `frontend/src/lib/vidro.js` e `frontend/vidro.ini` | Parâmetros centralizados de vidro e tintas |
+| `frontend/src/styles.css` | Sistema visual e layouts adaptáveis |
+| `frontend/public/scenes/` | Nove fundos SVG estáticos |
+| `tgcloud/lib/forecast.js` | Dados Open-Meteo e contrato meteorológico compartilhado |
+| `tgcloud/endpoints/searchLocations.js` | Busca autenticada de localidades |
+| `tgcloud/endpoints/getForecast.js` | Previsão autenticada e estruturada |
+| `tgcloud/handlers/` | Comandos e Rich Messages do bot, preservados |
+| `.github/workflows/deploy.yml` | Compila frontend e publica no Telegram Serverless |
+| `tgcloud.json` | Define a pasta estática `app/` do projeto publicado |
 
-O Mini App usa `Telegram.WebApp.Serverless.call('searchLocations', ...)` e `Telegram.WebApp.Serverless.call('getForecast', ...)`. O Telegram Serverless valida os dados de inicialização; os endpoints exigem o usuário da sessão e não expõem chaves ou credenciais. A interface trata os campos recebidos como texto, sem inserir HTML oriundo da API.
+A pasta histórica `app/` do repositório contém uma versão anterior do Mini App. A implantação automatizada não usa essa versão: antes de publicar, o workflow compila `frontend/`, substitui a pasta estática do projeto de implantação pelo resultado em `frontend/dist` e mantém os endpoints em `tgcloud/`. O build de Vite gera HTML/CSS/JS estáticos; o Telegram Serverless continua servindo a aplicação sem um servidor Node em tempo de execução.
 
 ## Publicação
 
-O projeto utiliza Node.js 20 no fluxo automatizado e `@tgcloud/cli` como ferramenta de implantação. Configure o segredo `TGCLOUD_TOKEN` no repositório. Alterações em `main` nos diretórios `tgcloud/` e `app/` acionam o workflow de publicação, incluindo a sincronização do webhook.
+O workflow instalado no GitHub é acionado quando `frontend/`, `app/`, `tgcloud/`, `tgcloud.json`, `package.json` ou o próprio workflow mudam na `main`. Ele utiliza Node.js 20, instala dependências de `frontend`, executa `npm run build`, copia a saída para `tFORECASTbot/app` e faz `tgcloud fetch`, `tgcloud push` e `tgcloud webhook sync`. O segredo `TGCLOUD_TOKEN` continua sendo necessário.
 
-Localmente, quando autorizado, a publicação utiliza a CLI do Telegram Serverless e o arquivo `tgcloud.json`; o host da Mini App usa o formato `https://app<app_id>.tgcloud.ai/`. Configure a URL resultante no BotFather como Mini App principal ou botão de menu.
+Para gerar os arquivos estáticos manualmente em um ambiente autorizado, execute `npm install` e `npm run build` na pasta `frontend/`, depois copie o conteúdo gerado em `frontend/dist/` para o diretório `app/` do projeto Telegram Serverless. A pasta de build não deve substituir os módulos backend em `tgcloud/`.
 
-## Verificação técnica
+## Verificação
 
-O fluxo de desenvolvimento segue a habilidade `tg-dev`: leitura das referências oficiais, inspeção estática, sem executar testes, sem comentários no código e com histórico detalhado das alterações.
+O desenvolvimento segue a habilidade `@TG Dev`, com referências `BOT_API.md`, `SERVERLESS.md` e `MINI_APPS.md`. São realizadas inspeções estáticas do código; o agente não executa testes. A confirmação de aparência, comportamento e publicação no Telegram é feita pelo usuário após o deploy.
 
-Histórico da versão: `docs/CHANGELOG-miniapp.md`.
+Histórico detalhado: `docs/CHANGELOG-miniapp.md`.
 
 ## Referências
 

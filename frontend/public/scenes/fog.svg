@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 430 930" preserveAspectRatio="xMidYMid slice">
+<defs><linearGradient id="sky" x1="0" y1="0" x2=".22" y2="1"><stop offset="0" stop-color="#9aadb8"/><stop offset=".52" stop-color="#c4d0d6"/><stop offset="1" stop-color="#e4e9ea"/></linearGradient><radialGradient id="halo"><stop offset="0" stop-color="#fff7cb" stop-opacity=".5"/><stop offset="1" stop-color="#fff7cb" stop-opacity="0"/></radialGradient><filter id="cloudBlur"><feGaussianBlur stdDeviation="22"/></filter><filter id="mistBlur"><feGaussianBlur stdDeviation="15"/></filter></defs>
+<rect width="430" height="930" fill="url(#sky)"/>
+<g fill="#ffffff" opacity="0.35" filter="url(#cloudBlur)"><path d="M-170 340c130-135 320-144 425-43 94-95 240-64 310 11v180H-170Z"/><path d="M75 635c110-115 288-123 387-28 70-44 157-33 237 40v190H75Z"/></g><g stroke="#fff" stroke-linecap="round" opacity=".32" filter="url(#mistBlur)" stroke-width="22"><path d="M-30 360H350"/><path d="M95 510H510"/><path d="M-40 715H400"/></g>
+</svg>
