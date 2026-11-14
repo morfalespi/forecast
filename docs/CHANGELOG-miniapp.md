@@ -1,5 +1,34 @@
 # Changelog — Mini App Forecast
 
+## 2026-11-14 — Refinamento 01: previsões sem rolagem e barra superior harmonizada
+
+**Solicitação:** em visualização full-size, reorganizar o espaço disponível nas telas Hoje, 3 dias e Semana, dispensando rolagem durante a leitura, e harmonizar a barra superior do Telegram com a cor do Forecast.
+
+### Mudanças de interface
+
+- **`app/styles.css`**: alterado o posicionamento da previsão para aproveitar integralmente a área útil da Mini App e diminuir folgas entre o cabeçalho, os cartões, a navegação e a atribuição meteorológica.
+- A área da previsão normalmente não possui rolagem: as alturas são redistribuídas por uma grade proporcional conforme o período selecionado.
+- **Hoje:** resumo meteorológico mais compacto, cinco métricas em duas linhas e cartões dos próximos períodos distribuídos horizontalmente no espaço disponível.
+- **3 dias:** três painéis redimensionáveis com descrição, mínima, máxima, vento e precipitação.
+- **Semana:** sete linhas mais enxutas, todas visíveis dentro da região disponível em uma tela cheia de smartphone convencional.
+- Barra inferior **Hoje / 3 dias / Semana** permanece visível e em estilo de vidro líquido.
+- Mantidos o fundo de chuva suave, os ícones animados, a largura máxima de smartphone e a ausência de rolagem na página.
+- Para telas excepcionalmente baixas (viewport inferior a 510 px), há rolagem interna de contingência, preservando a leitura integral dos dados em vez de cortá-los.
+
+### Barra nativa do Telegram
+
+- **`app/app.js`**: `syncTheme` passa a usar `Telegram.WebApp.setHeaderColor` e `Telegram.WebApp.setBackgroundColor` com a cor de fundo do Forecast, em sincronismo com o modo claro ou escuro.
+- Mantida a reação ao evento oficial `themeChanged` e a atualização do `meta theme-color` em navegadores externos.
+- A faixa superior é configurada pelo SDK Telegram WebApp, sem adicionar um cabeçalho HTML falso.
+
+### Inspeção estática
+
+- Revisadas as regras responsivas para Hoje, 3 dias e Semana, bem como a rolagem de contingência em telas muito baixas.
+- Verificada a quantidade dinâmica de colunas dos próximos períodos e a preservação do texto meteorológico.
+- Revisados os contratos das APIs `setHeaderColor`, `setBackgroundColor` e `themeChanged` na referência `MINI_APPS.md`.
+- Preservados os endpoints de pesquisa e previsão, os handlers do bot e o contrato da Open-Meteo.
+- Nenhum comentário adicionado a arquivos de código e nenhum teste executado, seguindo as regras do `@TG Dev`.
+
 ## 2026-11-14 — Implementação inicial
 
 **Escopo aprovado:** incorporar o visual do Rascunho 05 ao mesmo bot do Forecast, ativando pesquisa de localidades e previsões Hoje, 3 dias e Semana.
