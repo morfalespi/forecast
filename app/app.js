@@ -23,7 +23,7 @@ const updatedAt = document.querySelector('#updated-at');
 const viewport = window.visualViewport;
 const systemTheme = window.matchMedia('(prefers-color-scheme: dark)');
 
-let baselineHeight = Math.max(window.innerHeight, viewport?.height ?? 0);
+let backgroundHeight = Math.max(window.innerHeight, viewport?.height ?? 0);
 let requestSerial = 0;
 let activeRequest = 0;
 let currentLocation = null;
@@ -46,12 +46,12 @@ function syncTheme() {
 function syncViewport() {
   const height = Math.max(1, Math.round(viewport?.height ?? window.innerHeight));
   const top = Math.max(0, Math.round(viewport?.offsetTop ?? 0));
-  const typing = document.activeElement === searchInput && !homeView.hidden;
-  if (!typing) baselineHeight = Math.max(window.innerHeight, height);
+  if (document.activeElement !== searchInput && height >= backgroundHeight - 100) {
+    backgroundHeight = Math.max(1, Math.round(window.innerHeight));
+  }
   root.style.setProperty('--visual-height', height + 'px');
   root.style.setProperty('--visual-top', top + 'px');
-  page.dataset.keyboard = typing && baselineHeight - height > 110 ? 'open' : 'closed';
-  page.dataset.compact = typing && height < 340 ? 'true' : 'false';
+  root.style.setProperty('--home-background-height', backgroundHeight + 'px');
 }
 
 function create(tag, className, content) {
@@ -286,6 +286,7 @@ async function searchCity(query) {
     const result = await serverlessCall('searchLocations', { query });
     if (serial !== activeRequest || homeView.hidden) return;
     const locations = Array.isArray(result?.locations) ? result.locations : [];
+    if (document.activeElement === searchInput) searchInput.blur();
     displayResults(locations);
     setSearchStatus(locations.length ? '' : 'Nenhuma localidade encontrada.');
   } catch (error) {
@@ -458,7 +459,6 @@ form.addEventListener('submit', (event) => {
     setSearchStatus('Digite entre 2 e 100 caracteres.', true);
     return;
   }
-  searchInput.blur();
   searchCity(query);
 });
 searchInput.addEventListener('input', () => {
@@ -497,7 +497,7 @@ document.addEventListener('gesturestart', (event) => event.preventDefault(), { p
 document.addEventListener('gesturechange', (event) => event.preventDefault(), { passive: false });
 document.addEventListener('touchmove', (event) => {
   const target = event.target;
-  if (event.touches.length > 1 || !(target instanceof Element && target.closest('.forecast-scroll, .search-results, input'))) {
+  if (event.touches.length > 1 || !(target instanceof Element && target.closest('.forecast-scroll, .search-results, .search, button, input'))) {
     event.preventDefault();
   }
 }, { passive: false });
