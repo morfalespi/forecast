@@ -1309,7 +1309,7 @@
   display:none;
 }
 .page[data-screen="home"] .search-results {
-  max-height:max(0px,calc(var(--visual-height,100dvh) - 255px));
+  max-height:max(0px,calc(var(--visual-height,100dvh) - 340px));
   margin-top:12px;
 }
 .page[data-screen="home"] .refine {
