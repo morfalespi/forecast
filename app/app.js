@@ -147,7 +147,7 @@ function displayResults(locations) {
   }
   const hasResults = results.childElementCount > 0;
   results.hidden = !hasResults;
-  refine.hidden = !hasResults;
+  refine.hidden = false;
   page.dataset.mode = hasResults ? 'results' : 'intro';
   hint.textContent = hasResults ? 'Selecione uma localidade.' : 'Tente incluir estado ou país.';
 }
