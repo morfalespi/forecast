@@ -27,3 +27,8 @@ export const otica = (...groups) => Object.assign({}, sections.brilho, ...groups
 export const FROST = { ...otica("fosco"), frost, saturate };
 export const CONTROL = { ...otica("controles"), frost, saturate };
 export const SEGMENT = otica("segmentado");
+
+document.documentElement.style.setProperty("--vidro-frost", frost + "px");
+document.documentElement.style.setProperty("--vidro-saturate", String(saturate));
+document.documentElement.style.setProperty("--vidro-tint-claro", glassTint.light);
+document.documentElement.style.setProperty("--vidro-tint-escuro", glassTint.dark);
