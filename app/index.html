@@ -1,67 +1,160 @@
 <!doctype html>
 <html lang="pt-BR">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-    <meta name="color-scheme" content="light dark">
-    <title>Forecast</title>
-    <link rel="stylesheet" href="/styles.css">
-    <script src="https://telegram.org/js/telegram-web-app.js?61"></script>
-    <script src="/app.js" defer></script>
-  </head>
-  <body>
-    <main class="shell">
-      <header class="hero">
-        <div class="brand-mark" aria-hidden="true">
-          <span></span>
-          <span></span>
-          <span></span>
-        </div>
-        <div>
-          <p class="eyebrow">Telegram Mini App</p>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover, interactive-widget=resizes-content">
+  <meta name="theme-color" content="#8b82e6" id="theme-color">
+  <meta name="color-scheme" content="light dark">
+  <title>Forecast</title>
+  <script src="https://telegram.org/js/telegram-web-app.js?65"></script>
+  <link rel="stylesheet" href="/styles.css">
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <div class="page" data-screen="home" data-mode="intro" data-keyboard="closed">
+    <div class="rain-glass" aria-hidden="true">
+      <svg class="rain-texture" viewBox="0 0 430 930" preserveAspectRatio="xMidYMid slice" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="rain-bead" x1="10%" y1="10%" x2="92%" y2="95%">
+            <stop offset="0%" stop-color="#ffffff" stop-opacity=".94"/>
+            <stop offset="32%" stop-color="#ffffff" stop-opacity=".12"/>
+            <stop offset="75%" stop-color="#edf2ff" stop-opacity=".06"/>
+            <stop offset="100%" stop-color="#554d9a" stop-opacity=".37"/>
+          </linearGradient>
+          <linearGradient id="rain-track" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#ffffff" stop-opacity="0"/>
+            <stop offset="45%" stop-color="#ffffff" stop-opacity=".32"/>
+            <stop offset="100%" stop-color="#6b609e" stop-opacity="0"/>
+          </linearGradient>
+        </defs>
+        <g fill="url(#rain-bead)">
+          <ellipse cx="20" cy="50" rx="3.0" ry="5.6" transform="rotate(-13 20 50)"/>
+          <ellipse cx="79" cy="27" rx="2.1" ry="3.8" transform="rotate(18 79 27)"/>
+          <ellipse cx="128" cy="82" rx="4.3" ry="6.3" transform="rotate(-9 128 82)"/>
+          <ellipse cx="192" cy="49" rx="2.5" ry="5.0" transform="rotate(7 192 49)"/>
+          <ellipse cx="251" cy="110" rx="3.3" ry="6.1" transform="rotate(-11 251 110)"/>
+          <ellipse cx="312" cy="58" rx="2.4" ry="4.3" transform="rotate(11 312 58)"/>
+          <ellipse cx="382" cy="94" rx="4.4" ry="7.4" transform="rotate(-10 382 94)"/>
+          <ellipse cx="43" cy="166" rx="2.2" ry="4.4" transform="rotate(-17 43 166)"/>
+          <ellipse cx="102" cy="211" rx="5.1" ry="8.0" transform="rotate(14 102 211)"/>
+          <ellipse cx="164" cy="160" rx="2.6" ry="5.2" transform="rotate(-10 164 160)"/>
+          <ellipse cx="218" cy="234" rx="3.3" ry="6.5" transform="rotate(-6 218 234)"/>
+          <ellipse cx="294" cy="191" rx="4.2" ry="7.8" transform="rotate(7 294 191)"/>
+          <ellipse cx="359" cy="254" rx="2.8" ry="4.7" transform="rotate(-13 359 254)"/>
+          <ellipse cx="410" cy="212" rx="2.0" ry="4.2" transform="rotate(8 410 212)"/>
+          <ellipse cx="19" cy="299" rx="4.3" ry="7.0" transform="rotate(-10 19 299)"/>
+          <ellipse cx="68" cy="341" rx="2.4" ry="5.6" transform="rotate(15 68 341)"/>
+          <ellipse cx="136" cy="290" rx="2.5" ry="4.9" transform="rotate(-15 136 290)"/>
+          <ellipse cx="190" cy="361" rx="4.4" ry="8.3" transform="rotate(9 190 361)"/>
+          <ellipse cx="256" cy="321" rx="2.2" ry="5.2" transform="rotate(-6 256 321)"/>
+          <ellipse cx="319" cy="380" rx="4.8" ry="8.9" transform="rotate(6 319 380)"/>
+          <ellipse cx="379" cy="341" rx="2.9" ry="6.4" transform="rotate(-11 379 341)"/>
+          <ellipse cx="24" cy="445" rx="2.2" ry="4.8" transform="rotate(17 24 445)"/>
+          <ellipse cx="88" cy="427" rx="3.2" ry="6.0" transform="rotate(-17 88 427)"/>
+          <ellipse cx="145" cy="482" rx="4.1" ry="7.4" transform="rotate(8 145 482)"/>
+          <ellipse cx="217" cy="452" rx="2.7" ry="5.2" transform="rotate(7 217 452)"/>
+          <ellipse cx="268" cy="524" rx="3.7" ry="6.8" transform="rotate(-10 268 524)"/>
+          <ellipse cx="342" cy="496" rx="2.5" ry="5.2" transform="rotate(12 342 496)"/>
+          <ellipse cx="409" cy="460" rx="4.2" ry="8.0" transform="rotate(-8 409 460)"/>
+          <ellipse cx="47" cy="575" rx="3.5" ry="7.6" transform="rotate(11 47 575)"/>
+          <ellipse cx="114" cy="547" rx="2.1" ry="4.8" transform="rotate(-13 114 547)"/>
+          <ellipse cx="169" cy="600" rx="3.0" ry="5.4" transform="rotate(8 169 600)"/>
+          <ellipse cx="229" cy="581" rx="2.0" ry="4.3" transform="rotate(-9 229 581)"/>
+          <ellipse cx="293" cy="643" rx="4.5" ry="8.2" transform="rotate(7 293 643)"/>
+          <ellipse cx="376" cy="605" rx="2.5" ry="5.8" transform="rotate(-13 376 605)"/>
+          <ellipse cx="19" cy="692" rx="2.8" ry="5.4" transform="rotate(8 19 692)"/>
+          <ellipse cx="92" cy="662" rx="4.1" ry="7.5" transform="rotate(-8 92 662)"/>
+          <ellipse cx="151" cy="739" rx="2.7" ry="5.8" transform="rotate(13 151 739)"/>
+          <ellipse cx="218" cy="694" rx="3.3" ry="6.2" transform="rotate(-10 218 694)"/>
+          <ellipse cx="270" cy="766" rx="2.4" ry="5.5" transform="rotate(8 270 766)"/>
+          <ellipse cx="333" cy="710" rx="2.5" ry="4.7" transform="rotate(8 333 710)"/>
+          <ellipse cx="395" cy="759" rx="3.7" ry="7.3" transform="rotate(-8 395 759)"/>
+          <ellipse cx="43" cy="815" rx="2.2" ry="4.3" transform="rotate(-11 43 815)"/>
+          <ellipse cx="108" cy="861" rx="3.7" ry="6.7" transform="rotate(9 108 861)"/>
+          <ellipse cx="189" cy="829" rx="2.8" ry="4.8" transform="rotate(-8 189 829)"/>
+          <ellipse cx="252" cy="887" rx="4.5" ry="7.8" transform="rotate(10 252 887)"/>
+          <ellipse cx="313" cy="837" rx="2.4" ry="5.0" transform="rotate(-12 313 837)"/>
+          <ellipse cx="386" cy="894" rx="3.6" ry="6.8" transform="rotate(7 386 894)"/>
+        </g>
+        <g fill="#ffffff" fill-opacity=".35">
+          <ellipse cx="99" cy="207" rx="1.1" ry="2.1"/>
+          <ellipse cx="290" cy="186" rx="1.0" ry="2.2"/>
+          <ellipse cx="186" cy="356" rx="1.0" ry="2.6"/>
+          <ellipse cx="316" cy="375" rx="1.2" ry="2.8"/>
+          <ellipse cx="141" cy="476" rx="1.1" ry="2.4"/>
+          <ellipse cx="406" cy="454" rx="1.0" ry="2.7"/>
+          <ellipse cx="90" cy="658" rx="1.0" ry="2.3"/>
+          <ellipse cx="290" cy="638" rx="1.1" ry="2.5"/>
+          <ellipse cx="249" cy="883" rx="1.2" ry="2.4"/>
+        </g>
+        <g fill="none" stroke="url(#rain-track)" stroke-width="1.7" stroke-linecap="round" opacity=".29">
+          <path d="M 118 41 C 120 64, 117 88, 119 111"/>
+          <path d="M 334 124 C 333 150, 336 169, 334 189"/>
+          <path d="M 55 502 C 53 530, 55 559, 54 582"/>
+          <path d="M 382 684 C 384 710, 381 739, 382 757"/>
+        </g>
+      </svg>
+      <span class="rain-streak"></span>
+      <span class="rain-streak"></span>
+      <span class="rain-streak"></span>
+    </div>
+    <header class="topbar">
+      <div class="mini-brand frost" aria-label="Forecast">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 14a4 4 0 0 1 3.9-4A6 6 0 0 1 19 12.2a3.4 3.4 0 0 1-1.3 6.6H8a4 4 0 0 1-4-4.8Z"/><path d="M9 5.5l1-1.5m4.5 1.2 1.5-.8M4.5 8l-1.7-.7"/></svg>
+        Forecast
+      </div>
+    </header>
+    <main class="hero">
+      <section class="home-view" id="home-view" aria-label="Pesquisa de cidade">
+        <div class="intro">
+          <div class="weather-mark frost" aria-hidden="true">
+        <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="48.5" cy="29" r="14" fill="#FFE4A5" stroke="#F4B96E" stroke-width="2"/>
+          <path d="M21 52.5c-5.4 0-9.8-4.4-9.8-9.8a9.8 9.8 0 0 1 9.8-9.8 18.2 18.2 0 0 1 34.6 8.6 11 11 0 0 1-.3 22H24.1a12.5 12.5 0 0 1-3.1-24.6" fill="white" fill-opacity=".78" stroke="#9186C0" stroke-opacity=".52" stroke-width="2.1" stroke-linejoin="round"/>
+        </svg>
+      </div>
+          <p class="kicker">Seu tempo, em foco</p>
           <h1>Forecast</h1>
+          <p class="tagline">O clima de qualquer lugar, em um só olhar.</p>
         </div>
-      </header>
-
-      <section class="status-card" aria-live="polite">
-        <div class="status-line">
-          <span id="status-dot" class="status-dot pending"></span>
-          <div>
-            <p class="status-label">Estado</p>
-            <h2 id="status-title">Conectando ao Telegram</h2>
-          </div>
-        </div>
-        <p id="status-detail" class="status-detail">A identidade será lida pelo endpoint protegido do Telegram Serverless.</p>
+        <section class="search-area">
+          <form class="search frost" id="city-search" role="search">
+            <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" aria-hidden="true"><circle cx="10.7" cy="10.7" r="7"/><path d="m16 16 5 5"/></svg>
+            <input id="city" name="city" type="search" minlength="2" maxlength="100" required enterkeyhint="search" autocomplete="off" placeholder="Busque uma cidade ou região" aria-label="Nome da cidade ou região">
+            <button type="submit" class="search-go" id="search-button" aria-label="Buscar cidade">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 12h15m-6-6 6 6-6 6"/></svg>
+            </button>
+          </form>
+          <p class="search-hint" id="hint">Digite uma localidade para começar.</p>
+          <p class="search-feedback" id="feedback" role="status" aria-live="polite"></p>
+          <div class="search-results" id="results" aria-label="Localidades encontradas" hidden></div>
+          <button type="button" class="refine frost" id="refine" hidden>Refinar busca</button>
+        </section>
       </section>
-
-      <section id="profile-card" class="profile-card" hidden>
-        <div class="avatar-wrap">
-          <img id="avatar" class="avatar" alt="Foto do perfil" hidden>
-          <div id="avatar-fallback" class="avatar-fallback" aria-hidden="true">F</div>
+      <section class="forecast-view" id="forecast-view" aria-label="Previsão do tempo" hidden>
+        <header class="forecast-heading">
+          <div>
+            <p class="city-kicker">Previsão do tempo</p>
+            <h1 class="city-title" id="selected-city"></h1>
+          </div>
+          <button type="button" class="change-city frost" id="change-city">Nova busca</button>
+        </header>
+        <div class="forecast-scroll" id="forecast-scroll" role="region" aria-label="Detalhes da previsão" tabindex="0">
+          <div class="weather-content" id="weather-content"></div>
         </div>
-        <div class="identity">
-          <p class="status-label">Identidade validada</p>
-          <h2 id="display-name">Telegram</h2>
-          <p id="username" class="username"></p>
-        </div>
-        <dl class="facts">
-          <div>
-            <dt>ID</dt>
-            <dd id="user-id"></dd>
-          </div>
-          <div>
-            <dt>Idioma</dt>
-            <dd id="language"></dd>
-          </div>
-          <div>
-            <dt>Contexto</dt>
-            <dd id="context"></dd>
-          </div>
-        </dl>
       </section>
-
-      <p class="footnote">Dados exibidos somente na sessão atual da Mini App.</p>
     </main>
-  </body>
+    <nav class="period-tabs frost" id="period-tabs" aria-label="Período da previsão" hidden>
+      <button type="button" class="period-tab" data-period="today" aria-pressed="true">Hoje</button>
+      <button type="button" class="period-tab" data-period="three" aria-pressed="false">3 dias</button>
+      <button type="button" class="period-tab" data-period="week" aria-pressed="false">Semana</button>
+    </nav>
+    <footer class="footnote" id="home-footer">Forecast · Mini App</footer>
+    <footer class="attribution" id="forecast-attribution" hidden>
+      Fonte: <a href="https://open-meteo.com/" target="_blank" rel="noopener noreferrer">Open-Meteo</a> ·
+      <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener noreferrer">CC BY 4.0</a>
+      <span id="updated-at"></span>
+    </footer>
+  </div>
+</body>
 </html>
-

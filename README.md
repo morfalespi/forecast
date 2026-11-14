@@ -1,63 +1,52 @@
 # Forecast
 
-Base limpa de Telegram Bot, Telegram Serverless e Mini App criada somente a partir das referências oficiais fornecidas em 14 de novembro de 2026.
+Bot de previsão do tempo e Telegram Mini App, publicado no Telegram Serverless. As mensagens do bot e a interface do Mini App compartilham a lógica de consulta à Open-Meteo.
 
-## Estrutura
+## Funcionalidades
 
-- `tgcloud/handlers/message.js`: recebe mensagens e responde com `api.sendMessage`.
-- `tgcloud/endpoints/getProfile.js`: retorna dados de usuário e chat validados pelo Telegram Serverless.
-- `app/`: Mini App estática, responsiva e integrada ao tema do Telegram.
-- `tgcloud.json`: publica `app/` no host `tgcloud.ai` do projeto.
+- Conversa com o bot: comando `/clima`, pesquisa de cidades, seleção de localidades e previsões Hoje, 3 dias e Semana em Rich Messages.
+- Mini App: visual mobile-first baseado no Rascunho 05, com fundo de chuva sutil e superfícies translúcidas.
+- Busca no Mini App: até cinco localidades reais por pesquisa, identificação por cidade/região/país e opção **Refinar busca**.
+- Previsão no Mini App: condições atuais, mínima e máxima, sensação, umidade, vento, próximos períodos, três dias e semana.
+- Navegação inferior de vidro: **Hoje · 3 dias · Semana**, com alternância no mesmo painel.
+- Tema automático do Telegram (ou preferência do aparelho fora dele) e animações leves com preferência por movimento reduzido.
+- Layout de smartphone, inclusive no computador; página fixa e rolagem limitada aos painéis de resultados e previsão.
+- Fonte e atribuição: Open-Meteo, CC BY 4.0.
 
-## Preparação
+## Arquitetura
 
-Requisitos:
+| Caminho | Responsabilidade |
+| --- | --- |
+| `tgcloud/lib/forecast.js` | Consulta e normalização de localidades e previsões; mensagens do bot e contrato de dados do Mini App |
+| `tgcloud/handlers/message.js` | Comando `/clima` e mensagens privadas |
+| `tgcloud/handlers/callback_query.js` | Seleção de localidades e botões no chat |
+| `tgcloud/endpoints/searchLocations.js` | Pesquisa de até cinco cidades, com sessão validada pelo Telegram Serverless |
+| `tgcloud/endpoints/getForecast.js` | Previsão para ID selecionado, retornando dados estruturados |
+| `tgcloud/endpoints/getProfile.js` | Endpoint de identidade já existente, mantido para compatibilidade |
+| `app/index.html` | Estrutura visual do Mini App |
+| `app/styles.css` | Design de vidro, fundo orgânico, chuva e animações |
+| `app/app.js` | Estados da interface, busca, seleção, navegação, tema e viewport |
+| `tgcloud.json` | Publicação da pasta estática `app/` |
+| `.github/workflows/deploy.yml` | Publicação no Telegram Serverless após alterações em `main` |
 
-- Node.js 18 ou superior.
-- Serverless ativado no BotFather.
-- Token de CLI no formato `app<id>:<secret>`.
+O Mini App usa `Telegram.WebApp.Serverless.call('searchLocations', ...)` e `Telegram.WebApp.Serverless.call('getForecast', ...)`. O Telegram Serverless valida os dados de inicialização; os endpoints exigem o usuário da sessão e não expõem chaves ou credenciais. A interface trata os campos recebidos como texto, sem inserir HTML oriundo da API.
 
-Instale a CLI local:
+## Publicação
 
-```bash
-npm install
-```
+O projeto utiliza Node.js 20 no fluxo automatizado e `@tgcloud/cli` como ferramenta de implantação. Configure o segredo `TGCLOUD_TOKEN` no repositório. Alterações em `main` nos diretórios `tgcloud/` e `app/` acionam o workflow de publicação, incluindo a sincronização do webhook.
 
-Faça login localmente:
+Localmente, quando autorizado, a publicação utiliza a CLI do Telegram Serverless e o arquivo `tgcloud.json`; o host da Mini App usa o formato `https://app<app_id>.tgcloud.ai/`. Configure a URL resultante no BotFather como Mini App principal ou botão de menu.
 
-```bash
-npx tgcloud login
-```
+## Verificação técnica
 
-Em CI, use `TGCLOUD_TOKEN` no lugar do login interativo.
+O fluxo de desenvolvimento segue a habilidade `tg-dev`: leitura das referências oficiais, inspeção estática, sem executar testes, sem comentários no código e com histórico detalhado das alterações.
 
-## Implantação
+Histórico da versão: `docs/CHANGELOG-miniapp.md`.
 
-Publique módulos e Mini App no mesmo lote atômico:
+## Referências
 
-```bash
-npm run deploy
-```
-
-O comando imprime a URL no formato `https://app<app_id>.tgcloud.ai/`. Configure essa URL no BotFather como Main Mini App do bot. Depois, sincronize o webhook quando o status indicar divergência:
-
-```bash
-npx tgcloud webhook sync
-```
-
-## Verificação estática
-
-- O runtime importa apenas `sdk`.
-- O handler usa parâmetros Bot API em `snake_case`.
-- O endpoint usa `ctx.initData`, que o Telegram Serverless valida antes da execução.
-- O navegador não trata `initDataUnsafe` como identidade confiável.
-- A Mini App chama o endpoint com `Telegram.WebApp.Serverless.call`.
-- A interface chama `ready()` e `expand()` e respeita tema e áreas seguras do Telegram.
-- Não há banco, migração, pacote de runtime externo, valor secreto ou dado de demonstração.
-
-## Referências normativas
-
-- Telegram Serverless: `https://core.telegram.org/bots/serverless`
-- Telegram Bot API: `https://core.telegram.org/bots/api`
-- Telegram Mini Apps: `https://core.telegram.org/bots/webapps`
-
+- Telegram Bot API: https://core.telegram.org/bots/api
+- Telegram Mini Apps: https://core.telegram.org/bots/webapps
+- Telegram Serverless: https://core.telegram.org/bots/serverless
+- Open-Meteo: https://open-meteo.com/
+- Creative Commons Attribution 4.0: https://creativecommons.org/licenses/by/4.0/

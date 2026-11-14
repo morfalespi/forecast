@@ -513,3 +513,65 @@ export function buildUnavailableMessage() {
     ]
   };
 }
+
+
+export function buildMiniAppForecastResponse(location, forecast) {
+  const current = forecast?.current ?? {};
+  const firstDay = dailyForecast(forecast, 1)[0];
+  const [emoji, description] = weatherInfo(current.weather_code);
+  const days = dailyForecast(forecast, 7).map((day) => {
+    const [dayEmoji, dayDescription] = weatherInfo(day.code);
+    return {
+      date: day.date,
+      label: day.label,
+      fullLabel: fullDateLabel(day.date, day.label),
+      code: day.code,
+      emoji: dayEmoji,
+      description: dayDescription,
+      minimum: rounded(day.minimum),
+      maximum: rounded(day.maximum),
+      precipitation: rounded(day.precipitation),
+      wind: rounded(day.wind)
+    };
+  });
+  const periods = hourlyPeriods(forecast).map((period) => {
+    const [periodEmoji, periodDescription] = weatherInfo(period.code);
+    return {
+      label: period.label,
+      emoji: periodEmoji,
+      description: periodDescription,
+      code: period.code,
+      temperature: rounded(period.temperature),
+      precipitation: rounded(period.precipitation),
+      wind: rounded(period.wind)
+    };
+  });
+  return {
+    location: {
+      id: location.id,
+      name: location.name,
+      admin1: location.admin1,
+      country: location.country
+    },
+    updatedAt: typeof current.time === 'string' ? current.time : null,
+    current: {
+      code: rounded(current.weather_code),
+      emoji,
+      description,
+      temperature: rounded(current.temperature_2m),
+      minimum: rounded(firstDay?.minimum),
+      maximum: rounded(firstDay?.maximum),
+      apparent: rounded(current.apparent_temperature),
+      humidity: rounded(current.relative_humidity_2m),
+      wind: rounded(current.wind_speed_10m)
+    },
+    periods,
+    days,
+    attribution: {
+      source: 'Open-Meteo',
+      sourceUrl: OPEN_METEO_URL,
+      license: 'CC BY 4.0',
+      licenseUrl: LICENSE_URL
+    }
+  };
+}
