@@ -274,7 +274,7 @@ function currentBlocks(location, forecast) {
     heading([
       { type: 'bold', text: `AGORA · ${temperature}` },
       '\n',
-      description,
+      `${emoji} ${description}`,
       ...(apparent ? ['\n', `Sensação: ${apparent}`] : []),
       ...(humidity || wind ? ['\n', detailsText([humidity ? `Umidade: ${humidity}` : null, wind ? `Vento: ${wind}` : null])] : [])
     ], 4)
