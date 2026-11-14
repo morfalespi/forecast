@@ -270,21 +270,21 @@ function currentBlocks(location, forecast) {
   const humidity = valueText(current.relative_humidity_2m, '%');
   const wind = valueText(current.wind_speed_10m, ' km/h');
   const blocks = [
-    heading(`${emoji} ${locationLabel(location)} — Hoje`),
-    paragraph([
-      { type: 'marked', text: { type: 'bold', text: `AGORA · ${temperature}` } },
+    heading(location.name, 1),
+    heading([
+      { type: 'bold', text: `AGORA · ${temperature}` },
       '\n',
       description,
       ...(apparent ? ['\n', `Sensação: ${apparent}`] : []),
       ...(humidity || wind ? ['\n', detailsText([humidity ? `Umidade: ${humidity}` : null, wind ? `Vento: ${wind}` : null])] : [])
-    ])
+    ], 4)
   ];
   const periods = hourlyPeriods(forecast);
   if (periods.length) {
-    blocks.push({ type: 'divider' }, heading('Próximos períodos', 3));
+    blocks.push({ type: 'divider' }, heading('Próximos períodos', 2));
     for (const period of periods) {
       const [periodEmoji, periodDescription] = weatherInfo(period.code);
-      blocks.push(paragraph([
+      blocks.push(heading([
         { type: 'bold', text: period.label },
         '\n',
         detailsText([
@@ -293,7 +293,7 @@ function currentBlocks(location, forecast) {
           valueText(period.precipitation, '%') ? `Chuva: ${valueText(period.precipitation, '%')}` : null,
           valueText(period.wind, ' km/h') ? `Vento: ${valueText(period.wind, ' km/h')}` : null
         ])
-      ]));
+      ], 4));
     }
   }
   return blocks;
@@ -301,10 +301,10 @@ function currentBlocks(location, forecast) {
 
 function threeDayBlocks(location, forecast) {
   const days = dailyForecast(forecast, 3);
-  const blocks = [heading(`${locationLabel(location)} — Próximos 3 dias`)];
+  const blocks = [heading(location.name, 1), heading('Próximos 3 dias', 2)];
   for (const day of days) {
     const [emoji, description] = weatherInfo(day.code);
-    blocks.push(paragraph([
+    blocks.push(heading([
       { type: 'bold', text: day.label },
       '\n',
       detailsText([
@@ -313,7 +313,7 @@ function threeDayBlocks(location, forecast) {
         valueText(day.precipitation, '%') ? `Chuva: ${valueText(day.precipitation, '%')}` : null,
         valueText(day.wind, ' km/h') ? `Vento: ${valueText(day.wind, ' km/h')}` : null
       ])
-    ]));
+    ], 4));
   }
   return blocks;
 }
@@ -329,12 +329,9 @@ function weekBlocks(location, forecast) {
     if (!selected || day.precipitation > selected.precipitation) return day;
     return selected;
   }, null);
-  const blocks = [heading(`${locationLabel(location)} — Semana`)];
+  const blocks = [heading(location.name, 1), heading('Semana', 2)];
   if (wettest) {
-    blocks.push(paragraph({
-      type: 'marked',
-      text: `Maior chance de chuva: ${wettest.label.toLowerCase()} (${Math.round(wettest.precipitation)}%)`
-    }));
+    blocks.push(heading(`Maior chance de chuva: ${wettest.label.toLowerCase()} (${Math.round(wettest.precipitation)}%)`, 4));
   }
   blocks.push({
     type: 'table',
@@ -368,7 +365,7 @@ export function normalizeCityQuery(text) {
 export async function searchLocations(query) {
   const normalized = normalizeCityQuery(query);
   if (!normalized) return [];
-  const url = `${GEOCODING_SEARCH_URL}?name=${encodeURIComponent(normalized)}&count=7&language=pt&format=json`;
+  const url = `${GEOCODING_SEARCH_URL}?name=${encodeURIComponent(normalized)}&count=5&language=pt&format=json`;
   const payload = await requestJson(url);
   const results = Array.isArray(payload?.results) ? payload.results : [];
   return results.map(normalizeLocation).filter(Boolean);
@@ -457,7 +454,7 @@ export function buildLocationChoices(query, locations) {
     heading(`Qual ${query}?`),
     paragraph('Foram encontradas localidades com esse nome. Selecione a cidade desejada.')
   ];
-  for (const location of locations.slice(0, 7)) {
+  for (const location of locations.slice(0, 5)) {
     blocks.push({
       type: 'buttons',
       align: 'left',
