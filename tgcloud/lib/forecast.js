@@ -7,6 +7,11 @@ const OPEN_METEO_URL = 'https://open-meteo.com/';
 const LICENSE_URL = 'https://creativecommons.org/licenses/by/4.0/';
 const PERIODS = new Set(['today', 'three', 'week']);
 const DAY_NAMES = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+const DAY_NAMES_FULL = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
+const MONTH_NAMES = [
+  'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
+  'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
+];
 const WEATHER = new Map([
   [0, ['☀️', 'Céu limpo']],
   [1, ['🌤️', 'Predominantemente limpo']],
@@ -125,6 +130,14 @@ function dateLabel(date, index) {
   const parsed = new Date(`${date}T12:00:00Z`);
   if (Number.isNaN(parsed.getTime())) return date;
   return `${DAY_NAMES[parsed.getUTCDay()]} ${date.slice(8, 10)}/${date.slice(5, 7)}`;
+}
+
+function fullDateLabel(date, label) {
+  const parsed = new Date(`${date}T12:00:00Z`);
+  if (Number.isNaN(parsed.getTime())) return label;
+  const weekday = DAY_NAMES_FULL[parsed.getUTCDay()];
+  const month = MONTH_NAMES[parsed.getUTCMonth()];
+  return `${label} (${weekday}, ${parsed.getUTCDate()} de ${month})`;
 }
 
 function dominantCode(codes) {
@@ -311,16 +324,16 @@ function threeDayBlocks(location, forecast) {
   const blocks = [heading(location.name, 1), heading('Próximos 3 dias', 2)];
   for (const day of days) {
     const [emoji, description] = weatherInfo(day.code);
-    blocks.push(heading([
-      { type: 'bold', text: day.label },
-      '\n',
-      detailsText([
+    blocks.push(
+      { type: 'divider' },
+      heading(fullDateLabel(day.date, day.label), 3),
+      heading(detailsText([
         `${emoji} ${description}`,
         day.minimum !== null && day.maximum !== null ? `${Math.round(day.minimum)}–${Math.round(day.maximum)} °C` : null,
         valueText(day.precipitation, '%') ? `Chuva: ${valueText(day.precipitation, '%')}` : null,
         valueText(day.wind, ' km/h') ? `Vento: ${valueText(day.wind, ' km/h')}` : null
-      ])
-    ], 4));
+      ]), 4)
+    );
   }
   return blocks;
 }
@@ -488,7 +501,7 @@ export function buildForecastMessage(location, forecast, period = 'today') {
       ? threeDayBlocks(location, forecast)
       : weekBlocks(location, forecast);
   return {
-    blocks: [...content, forecastButtons(location.id, period), footer(forecast, period === 'today')]
+    blocks: [...content, forecastButtons(location.id, period), footer(forecast, period === 'today' || period === 'three')]
   };
 }
 
