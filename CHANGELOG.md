@@ -17,7 +17,9 @@
 - Adiciona tratamento de consulta indisponível, callback inválido, cidade não encontrada e dados parciais sem inventar informações.
 - Mantém importações restritas ao `sdk` e aos módulos relativos do projeto, sem dependência de runtime adicional.
 - Não adiciona comentários, credenciais, banco, migração, histórico, dados simulados ou arquivos de teste.
-- Não altera a Mini App, o endpoint `getProfile`, `tgcloud.json`, `package.json` ou o workflow de implantação.
+- Não altera a Mini App, o endpoint `getProfile`, `tgcloud.json` ou `package.json`.
+- Sincroniza o estado do projeto temporário com `npx tgcloud fetch` antes do `push`, evitando a recusa de implantação quando o bot já possui módulos publicados.
+- Mantém `TGCLOUD_TOKEN` restrito às etapas oficiais de `fetch` e `push` do Telegram Serverless.
 
 ## 1.0.0 — 2026-11-14
 

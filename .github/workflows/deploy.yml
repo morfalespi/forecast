@@ -35,6 +35,10 @@ jobs:
           cp -R app tFORECASTbot/app
           cp tgcloud.json tFORECASTbot/tgcloud.json
           rm -f tFORECASTbot/tgcloud.jsonc
+      - run: npx tgcloud fetch
+        working-directory: tFORECASTbot
+        env:
+          TGCLOUD_TOKEN: ${{ secrets.TGCLOUD_TOKEN }}
       - run: npx tgcloud push
         working-directory: tFORECASTbot
         env:
