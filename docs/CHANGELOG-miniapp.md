@@ -1,5 +1,36 @@
 # Changelog — Mini App Forecast
 
+## 2026-11-14 — Refinamento 05: superfícies de vidro independentes
+
+**Solicitação:** retirar faixas, linhas e superfícies contínuas aparentes por trás dos componentes meteorológicos, preservando o acabamento de vidro e a separação visual dos cards.
+
+### Fundos SVG
+
+- **`frontend/public/scenes/neutral.svg`**, **`sun.svg`**, **`partly.svg`**, **`cloud.svg`**, **`rain.svg`**, **`storm.svg`**, **`snow.svg`**, **`fog.svg`** e **`night.svg`**: as duas formas de nuvens fechadas com bases horizontais, que podiam produzir faixas retas visíveis atrás dos cards, foram substituídas por quatro campos atmosféricos elípticos de bordas suaves.
+- Nova definição de gradiente radial `cloudAtmosphere` com opacidade decrescente até zero. Cada campo se dissolve naturalmente no cenário e não possui arestas retas atravessando a interface.
+- Mantidas paleta, sol, lua, chuva, relâmpago, flocos e névoa dos cenários existentes; os fundos permanecem inteiramente estáticos e variam conforme a condição atual.
+
+### Layout e composição de vidro
+
+- **`frontend/src/styles.css`**: `.forecast-content` deixa de aplicar recorte retangular (`overflow:hidden`) e passa a permitir que as superfícies e suas sombras sejam desenhadas sem cortes quadrados.
+- `.forecast-content`, `.weather-grid`, `.metrics-grid` e `.period-cards` continuam transparentes, sem plano, borda ou sombra compartilhados atrás dos filhos.
+- `.glass-panel` mantém seu próprio fundo fosco e cantos arredondados, mas recebe sombra local mais curta, reduzindo a união visual entre sombras de cards adjacentes.
+- Aumentado de maneira contida o espaçamento entre painéis de Hoje, 3 dias e Semana, entre métricas e entre próximos períodos. O objetivo é expor o cenário entre os componentes, sem transformá-los num bloco contínuo.
+- Mantido o fallback de rolagem somente na área interna de previsão para telas excepcionalmente baixas, com a página externa fixa.
+
+### Escopo preservado
+
+- Nenhuma alteração em React, imports, componentes meteorológicos ou ícones animados, regras de escolha de cenário, endpoints Telegram Serverless, handlers e lógica da Open-Meteo.
+- Mantidos o menu Hoje/3 dias/Semana, a pesquisa com cinco resultados e Refinar busca, os temas claro/escuro automáticos e a versão mobile.
+- Alterações limitadas a nove SVGs de fundo, `frontend/src/styles.css` e documentação.
+
+### Inspeção estática @TG Dev
+
+- Conferidos os nove SVGs sem as geometrias anteriores de bases retas; verificado o fechamento das definições de gradiente e dos grupos.
+- Inspecionadas as regras CSS da área de previsão, dos cards individuais e das áreas de agrupamento, além do fallback de telas baixas.
+- Revisitadas `MINI_APPS.md`, `SERVERLESS.md` e `BOT_API.md` do @TG Dev. Nenhum comentário de código adicionado e **nenhum teste ou build executado**, conforme as regras da habilidade.
+- O resultado visual real ainda depende da avaliação manual da versão implantada no Telegram.
+
 ## 2026-11-14 — Refinamento 04: reconstrução visual pela arquitetura óptica do ZIP
 
 **Escopo aprovado:** substituir o acabamento artesanal por um sistema visual fundamentado em `HTML-main 3.zip`, ampliar tipografia, redesenhar cards, substituir chuva animada do fundo por cenários estáticos conforme a condição atual e preservar o Mini App meteorológico funcional.
