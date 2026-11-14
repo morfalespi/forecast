@@ -6,6 +6,7 @@ on:
       - main
     paths:
       - app/**
+      - frontend/**
       - tgcloud/**
       - tgcloud.json
       - package.json
@@ -28,11 +29,15 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
+      - run: npm install --no-audit --no-fund
+        working-directory: frontend
+      - run: npm run build
+        working-directory: frontend
       - run: npm create @tgcloud/bot tFORECASTbot
       - run: |
           rm -rf tFORECASTbot/tgcloud
           cp -R tgcloud tFORECASTbot/tgcloud
-          cp -R app tFORECASTbot/app
+          cp -R frontend/dist tFORECASTbot/app
           cp tgcloud.json tFORECASTbot/tgcloud.json
           rm -f tFORECASTbot/tgcloud.jsonc
       - run: npx tgcloud fetch
