@@ -23,13 +23,20 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    env:
-      TGCLOUD_TOKEN: ${{ secrets.TGCLOUD_TOKEN }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-      - run: npm install
+      - run: npm create @tgcloud/bot tFORECASTbot
+      - run: |
+          rm -rf tFORECASTbot/tgcloud
+          cp -R tgcloud tFORECASTbot/tgcloud
+          cp -R app tFORECASTbot/app
+          cp tgcloud.json tFORECASTbot/tgcloud.json
+          rm -f tFORECASTbot/tgcloud.jsonc
       - run: npx tgcloud push
+        working-directory: tFORECASTbot
+        env:
+          TGCLOUD_TOKEN: ${{ secrets.TGCLOUD_TOKEN }}
 

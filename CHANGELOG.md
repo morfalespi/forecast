@@ -13,3 +13,7 @@
 - Não inclui código, arquivo, configuração, segredo ou artefato da implementação anterior.
 - Adiciona workflow de implantação automática na branch `main` com Node.js 20, instalação da CLI local e `npx tgcloud push` autenticado pelo secret `TGCLOUD_TOKEN`.
 - Restringe a permissão do workflow à leitura do conteúdo e impede cancelamento de uma implantação em andamento.
+- Altera a implantação para criar o projeto com `npm create @tgcloud/bot tFORECASTbot` antes do envio.
+- Substitui no diretório temporário do runner o exemplo criado pelo scaffold pelos módulos `tgcloud/`, pela Mini App `app/` e pela configuração `tgcloud.json` do repositório.
+- Executa `npx tgcloud push` dentro do projeto criado em `tFORECASTbot`.
+- Expõe `TGCLOUD_TOKEN` somente à etapa de `tgcloud push`, sem disponibilizar o secret ao scaffold ou às etapas de cópia.
