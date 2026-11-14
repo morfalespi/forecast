@@ -17,7 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     env:
-      TGCLOUD_TOKEN: ${{ vars.TGCLOUD_TOKEN || secrets.TGCLOUD_TOKEN }}
+      TGCLOUD_TOKEN: ${{ vars.TGCLOUD_TOKEN }}
       OWNER_ID: ${{ vars.OWNER_ID }}
     steps:
       - name: Checkout main
