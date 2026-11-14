@@ -268,6 +268,7 @@ function todayContent(data) {
   if (data.periods?.length) {
     content.append(create('h2', 'content-title', 'Próximos períodos'));
     const periodGrid = create('div', 'periods-grid');
+    periodGrid.style.setProperty('--period-columns', String(Math.min(data.periods.length, 3)));
     for (const period of data.periods) {
       const card = create('article', 'glass-panel frost period-tile');
       card.append(
