@@ -1,0 +1,35 @@
+name: Deploy Telegram Serverless
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - app/**
+      - tgcloud/**
+      - tgcloud.json
+      - package.json
+      - .github/workflows/deploy.yml
+  workflow_dispatch:
+
+concurrency:
+  group: forecast-tgcloud-deploy
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      TGCLOUD_TOKEN: ${{ secrets.TGCLOUD_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm install
+      - run: npx tgcloud push
+

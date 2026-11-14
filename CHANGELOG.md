@@ -11,3 +11,5 @@
 - Adiciona estados explícitos de conexão, sucesso e falha sem dados simulados.
 - Adiciona instruções de login, implantação, configuração do BotFather e sincronização do webhook.
 - Não inclui código, arquivo, configuração, segredo ou artefato da implementação anterior.
+- Adiciona workflow de implantação automática na branch `main` com Node.js 20, instalação da CLI local e `npx tgcloud push` autenticado pelo secret `TGCLOUD_TOKEN`.
+- Restringe a permissão do workflow à leitura do conteúdo e impede cancelamento de uma implantação em andamento.
