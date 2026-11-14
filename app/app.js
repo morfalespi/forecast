@@ -140,9 +140,13 @@ function cloudArtwork() {
 
 function weatherArtwork(type) {
   const nodes = [];
-  if (type === 'sun' || type === 'partly') nodes.push(sunArtwork());
+  if (type === 'sun' || type === 'partly') nodes.push(type === 'partly' ? sunArtwork(43, 21, 8) : sunArtwork());
   if (type === 'moon' || type === 'night-partly') nodes.push(moonArtwork());
-  if (!['sun', 'moon', 'unknown'].includes(type)) nodes.push(cloudArtwork());
+  if (!['sun', 'moon', 'unknown'].includes(type)) {
+    const cloud = cloudArtwork();
+    if (type === 'partly' || type === 'night-partly') cloud.setAttribute('transform', 'translate(-3 14) scale(.82)');
+    nodes.push(cloud);
+  }
   if (type === 'fog') {
     nodes.push(svgElement('g', { class: 'wx-fog-lines' }, [
       svgElement('path', { d: 'M12 51h26', class: 'wx-fog-line' }),
